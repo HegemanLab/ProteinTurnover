@@ -2,11 +2,22 @@ Package: ProteinTurnover
 Version: 0.9.1
 Date: 2015-07-16
 Title: Protein Turnover Experiment Analysis
-Description: Analyze data from protein turnover experiments using labeled isotopes.
-Author: Aaron Rendahl <arendahl@stat.umn.edu>, Sandy Weisberg <sandy@stat.umn.edu>, Thomas McGowan <mcgo0092@umn.edu>
+Description: Analyze data from protein turnover experiments using labeled
+    isotopes.
+Author: Aaron Rendahl <arendahl@stat.umn.edu>, Sandy Weisberg
+    <sandy@stat.umn.edu>, Thomas McGowan <mcgo0092@umn.edu>
 Maintainer: Aaron Rendahl <arendahl@stat.umn.edu>
-Depends: R (>= 3.2.0)
-Imports: R2HTML (>= 2.3.1), parallel, lattice (>= 0.20-31), latticeExtra (>= 0.6-26)
-Suggests: quantreg (>= 5.11), MASS (>= 7.3-40), xcms (>= 1.44.0)
+Depends:
+    R (>= 3.2.0)
+Imports:
+    R2HTML (>= 2.3.1),
+    parallel,
+    lattice (>= 0.20-31),
+    latticeExtra (>= 0.6-26)
+Suggests:
+    quantreg (>= 5.11),
+    MASS (>= 7.3-40),
+    xcms (>= 1.44.0)
 License: GPL (>= 3)
 LazyData: true
+RoxygenNote: 5.0.1

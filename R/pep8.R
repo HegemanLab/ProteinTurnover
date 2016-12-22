@@ -184,9 +184,9 @@ fitN <- function(p.obs, p.est) {
 }
 
 #' Fit a model
-#'  
+#'
 #' Fit a model of how mass changes over time of a specific element
-#'  
+#'
 #' @aliases print.pepfit plot.pepfit fitted.pepfit
 #' @param TimePoint The timepoint the observation was taken at
 #' @param RelAb The relative abundance of that observation
