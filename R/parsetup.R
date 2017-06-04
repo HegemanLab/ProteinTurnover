@@ -272,31 +272,36 @@ parsetup.default <- function(Day, type=c("dilution", "incorporation", "full"), .
 
 #' @rdname parsetup
 #' @export
-parsetup.dilution<-function(Day, alpha=c("one","many"), M=c("none","one","many")) {
+parsetup.dilution<-function(Day, alpha=c("one","many"), M=c("none","one","many"), noise=c("none","one","many")) {
   alpha<-match.arg(alpha)
   M<-match.arg(M)
+  noise <- match.arg(noise)
   parsetup.full(Day, 
            alpha=list(type=alpha),
-           M=list(type=M, default0=NA))
+           M=list(type=M, default0=NA),
+           noise=list(type=noise))
 }
 
 #' @rdname parsetup
 #' @export
-parsetup.incorporation <- function(Day, alpha=c("many", "log2k", "log2kplateau", "k", "kplateau"), M=c("none","one","many")) {
+parsetup.incorporation <- function(Day, alpha=c("many", "log2k", "log2kplateau", "k", "kplateau"), M=c("none","one","many"), noise=c("none","one","many")) {
     M <- match.arg(M)
     alpha <- match.arg(alpha)
+    noise <- match.arg(noise)
     if(alpha=="many") {
         parsetup.full(Day, 
                       alpha=list(type="many", default0=1),
                       pi=list(type="many", default0=0),
                       r=list(default=1, default0=1),
-                      M=list(type=M, default0=NA))
+                      M=list(type=M, default0=NA),
+                      noise=list(type=noise))
     } else {
         p <- parsetup.full(Day, 
                            alpha=list(type="none", default=NA),
                            pi=list(type="many", default0=0),
                            r=list(default=1, default0=1),
-                           M=list(type=M, default0=NA))
+                           M=list(type=M, default0=NA),
+                           noise=list(type=noise))
         if(alpha %in% c("kplateau", "log2kplateau")) {
             p$par <- rbind(plateau=c(0.02, 0.01, Inf), p$par)
         }

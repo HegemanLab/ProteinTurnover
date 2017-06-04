@@ -89,14 +89,21 @@ estCorr <- function(vcov) {
 ###################################################
 
 probjk <- function(k, N, nab, NatAb,
-                   parmatrix, row, verbose=FALSE) {
+                   parmatrix, row, verbose=FALSE, k.max=max(k)) {
   alpha <- parmatrix[row,1]
   r     <- parmatrix[row,2]
   pi0   <- parmatrix[1,3]
   piJ   <- parmatrix[row,3]
   M     <- parmatrix[row,4]
   M0     <- parmatrix[1,4]
+  noise <- parmatrix[row,5]
+  if(is.na(noise)) {
+    pnoise <- 0
+  } else {
+    pnoise <- ilogit(noise)
+  }
   k0 <- 0:max(k)
+  nk <- k.max + 1
   delta <- dbetabinom(k0, N, nab, NA)
   if(alpha==1) {
     out<-delta
@@ -114,19 +121,24 @@ probjk <- function(k, N, nab, NatAb,
     out <- data.frame(delta =alpha*convC(delta, NatAb, scale=FALSE)[k+1],
                       gamma0=(1-alpha)*(1-r)*convC(gamma0, NatAb, scale=FALSE)[k+1],
                       gammaJ=(1-alpha)*r*convC(gammaJ, NatAb, scale=FALSE)[k+1],
-                      total = convC(out, NatAb, scale=FALSE)[k+1])
+                      subtotal = convC(out, NatAb, scale=FALSE)[k+1],
+                      noise=pnoise/nk)
+    out$total <- pnoise/nk + (1-pnoise)*out$subtotal
     out
   } else {
-      convC(out, NatAb, scale=FALSE)[k+1]  
+    out <- convC(out, NatAb, scale=FALSE)[k+1]  
+    out <- pnoise/nk + (1-pnoise)*out
+    out
   }
 }
 
 getprob <- function(parmatrix, Day, Count, N, nab, NatAb) {
     days <- sort(unique(Day))
     p <- numeric(length(Count))
+    k.max <- max(Count) + 1
     for(j in seq_along(days)) {
         use <- Day == days[j]
-        p[use] <- probjk(k=Count[use], N=N, nab=nab, NatAb=NatAb, parmatrix=parmatrix, row=j)
+        p[use] <- probjk(k=Count[use], N=N, nab=nab, NatAb=NatAb, parmatrix=parmatrix, row=j, k.max=k.max)
     }
     p
 }
@@ -134,9 +146,10 @@ getprob <- function(parmatrix, Day, Count, N, nab, NatAb) {
 getRelAb <- function(parmatrix, Day, Count, N, nab, NatAb, norm_channel) {
     days <- sort(unique(Day))
     relab <- numeric(length(Count))
+    k.max <- max(Count) + 1
     for(j in seq_along(days)) {
         use <- Day == days[j]
-        tmp <- probjk(k=Count[use], N=N, nab=nab, NatAb=NatAb, parmatrix=parmatrix, row=j)
+        tmp <- probjk(k=Count[use], N=N, nab=nab, NatAb=NatAb, parmatrix=parmatrix, row=j, k.max=k.max)
         nc <- which(Count[use] == norm_channel[j])
         tmp <- tmp/tmp[nc]
         tmp[nc] <- NA
@@ -317,6 +330,7 @@ pepfit <- function(TimePoint, RelAb, Channel, data,
   ans1$name <- name
   ans1$parmatrix <- p$parmatrix(ans1$par)
   ans1$TimeUnit <- time.unit
+  ans1$k.max <- max(ans1$Count)
   class(ans1)<- c("pepfit", class(ans1))
   if(time) {ans1$time <- proc.time() - start.time}
   ans1
@@ -401,7 +415,7 @@ print.summary.pepfit <- function(x, digits=x$digits, ...) {
 getFitFor <- function(obj,daynum,range) {
   probjk(k=range, N=obj$Element$n, nab=obj$Element$nab, NatAb=obj$NatAb,
               parmatrix=obj$parmatrix,
-              row=daynum, verbose=TRUE)
+              row=daynum, verbose=TRUE, k.max=obj$k.max)
 }
 
 #' @export
@@ -411,10 +425,10 @@ fitted.pepfit <- function(object, range=0:max(object$data$Channel), ...) {
   d <- lapply(n, function(i) {
     out <- probjk(k=range, N=object$Element$n, nab=object$Element$nab,
                   NatAb=object$NatAb, parmatrix=object$parmatrix,
-                  row=i, verbose=TRUE)
+                  row=i, verbose=TRUE, k.max=object$k.max)
     data.frame(TimePoint=times[i], Channel=range, out)
   })
-  out <- merge(object$data, do.call(rbind, d))
+  out <- merge(object$data, do.call(rbind, d), all=TRUE)
   out <- out[order(out$TimePoint, out$Channel),]
   rownames(out) <- 1:nrow(out)
   out
@@ -446,6 +460,7 @@ plot.pepfit <- function(x, as.table=TRUE, main=x$name,
            panel.linesifnz(x,f$delta[subscripts], col="red")
            panel.linesifnz(x,f$gamma0[subscripts], col="green")
            panel.linesifnz(x,f$gammaJ[subscripts], col="blue")
+           panel.linesifnz(x,f$noise[subscripts], col="purple")
            panel.linesifnz(x,f$total[subscripts], col="black", lty=2)
          }, main=main, sub=sub, ...)
 }
