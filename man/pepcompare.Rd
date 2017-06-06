@@ -5,7 +5,7 @@
 \alias{print.pepcompare}
 \title{Compare two fitted models}
 \usage{
-pepcompare(pepfit1, pepfit2, N = 1000, level = 0.05, sig.digits = 5)
+pepcompare(pepfit1, pepfit2, sig.digits = 5)
 
 \method{print}{pepcompare}(x, sig.digits = x$sig.digits, ...)
 }
@@ -13,10 +13,6 @@ pepcompare(pepfit1, pepfit2, N = 1000, level = 0.05, sig.digits = 5)
 \item{pepfit1}{The first fitted model}
 
 \item{pepfit2}{The second fitted model}
-
-\item{N}{The sample size to use when computing the corresponding p-value.}
-
-\item{level}{The significance level to use when computing the corresponding sample size.}
 
 \item{sig.digits}{Number of significant digits to report.}
 

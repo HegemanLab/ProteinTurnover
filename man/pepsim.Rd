@@ -6,7 +6,7 @@
 \alias{print.pepsim}
 \title{Create a set of simulated data}
 \usage{
-pepsim(object, Nobs = 1000, Nrep = 10)
+pepsim(object, Nobs = 1/pepfittest(object)$sigma2, Nrep = 10)
 
 \method{print}{pepsim}(x, ...)
 

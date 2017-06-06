@@ -9,16 +9,14 @@
 \usage{
 score.visual(obj)
 
-score.dev(obj, level = 0.05, N = 1000)
+score.dev(obj, level = 0.05)
 
-score.N(obj, level = 0.05, N = 1000)
+score.N(obj, level = 0.05)
 }
 \arguments{
 \item{obj}{a pepfit object}
 
 \item{level}{significance level to use to get associated sample size}
-
-\item{N}{sample size to use to get associated significance level}
 }
 \value{
 \item{overall}{Overall Score}
