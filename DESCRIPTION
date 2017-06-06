@@ -13,7 +13,11 @@ Imports:
     R2HTML (>= 2.3.1),
     parallel,
     lattice (>= 0.20-31),
-    latticeExtra (>= 0.6-26)
+    latticeExtra (>= 0.6-26),
+    utils,
+    grDevices,
+    graphics,
+    stats
 Suggests:
     quantreg (>= 5.11),
     MASS (>= 7.3-40),

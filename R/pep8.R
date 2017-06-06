@@ -59,7 +59,7 @@
 
 dbetabinom <- function(k, N, mu, M) {
   if(is.na(M)) {
-    dbinom(k,N,mu)
+    stats::dbinom(k,N,mu)
   } else {
     alpha <- M*mu
     beta  <- M*(1-mu)
@@ -148,7 +148,7 @@ getRelAb <- function(parmatrix, Day, Count, N, nab, NatAb, norm_channel) {
 fitLogLik2 <- function(par, to.parmatrix, Day, Count, N, nab, NatAb, relab.obs, relab.se, norm_channel) {
     relab.est <- getRelAb(parmatrix=to.parmatrix(par), Day=Day, Count=Count,
                           N=N, nab=nab, NatAb=NatAb, norm_channel=norm_channel)    
-    sum(dnorm(relab.est, mean=relab.obs, sd=relab.se, log=TRUE), na.rm=TRUE)
+    sum(stats::dnorm(relab.est, mean=relab.obs, sd=relab.se, log=TRUE), na.rm=TRUE)
     
 }
 
@@ -178,7 +178,7 @@ fitN <- function(p.obs, p.est) {
             sum(fi*digamma(ai))*n - sum(fi^2*trigamma(ai))*n^2 +
                 sum(n*fi*log(pi))
     }
-    logN <- uniroot(d2, log(c(10, 1e8)), fi=p.obs, pi=p.est)$root
+    logN <- stats::uniroot(d2, log(c(10, 1e8)), fi=p.obs, pi=p.est)$root
     se <- sqrt(-1/d3(logN, p.obs, p.est))
     c(logN=logN, se=se)
 }
@@ -286,13 +286,13 @@ pepfit <- function(TimePoint, RelAb, Channel, data,
   d$proportion <- d$RelAb/tapply(d$RelAb, ts, sum, na.rm=TRUE)[ts]
   usecol <- if(useRelAb) {"RelAb"} else {"proportion"}
   if(method=="binomial") {
-      ans1 <- optim(start.par, fitLoglik, to.parmatrix=p$parmatrix,
+      ans1 <- stats::optim(start.par, fitLoglik, to.parmatrix=p$parmatrix,
                     Day=d$TimePoint, Count=d$Channel, N=N, nab=nab, NatAb=NatAb,
                     LogLik=LogLik1, p.obs=d[[usecol]], 
                     method="L-BFGS-B", control=list(fnscale=-1, maxit=maxit),
                     lower=p$par$lower, upper=p$par$upper, hessian=se)
   } else if(method=="regression") {
-      ans1 <- optim(start.par, fitLogLik2, to.parmatrix=p$parmatrix,
+      ans1 <- stats::optim(start.par, fitLogLik2, to.parmatrix=p$parmatrix,
                     Day=d$TimePoint, Count=d$Channel, N=N, nab=nab, NatAb=NatAb,
                     relab.obs=d$RelAb.obs, relab.se=d$RelAb.se, norm_channel=data$norm_channel,
                     method="L-BFGS-B", control=list(fnscale=-1, maxit=maxit),
@@ -424,7 +424,7 @@ fitted.pepfit <- function(object, range=0:max(object$data$Channel), ...) {
 plot.pepfit <- function(x, as.table=TRUE, main=x$name,
                         sub=paste("Isotope:", x$Element$name),
                         xlab="Isotope Channel", ylim, ...) {
-  f <- fitted(x)
+  f <- stats::fitted(x)
   if(!is.na(x$TimeUnit)) {
     tp.levels <- paste(x$TimeUnit, sort(unique(f$TimePoint)))
     tp <- paste(x$TimeUnit, f$TimePoint)

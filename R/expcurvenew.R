@@ -26,7 +26,7 @@ fitexpcurve <- function(x, y, intercept=NA, limit=NA, halflife=NA, halflifemax=m
       p <- exp((log(1/2) * x)/halflife)
       fun(p)$ss
     }
-    o <- optimize(fop, c(0, halflifemax))
+    o <- stats::optimize(fop, c(0, halflifemax))
     halflife <- o$minimum
   }
   p <- exp((log(1/2) * x)/halflife)
@@ -44,7 +44,7 @@ ssil <- function(p, y, intercept, limit) {
 }
 
 findintlim <- function(p, y) {
-  m <- lsfit(p, y)
+  m <- stats::lsfit(p, y)
   ss <- sum(m$residuals^2)
   cf <- as.numeric(m$coef)
   int <- cf[1] + cf[2]
@@ -61,7 +61,7 @@ findintlim <- function(p, y) {
 }
   
 findlim <- function(p, y, int) {
-  m <- lsfit(p-1, y-int, intercept=FALSE)
+  m <- stats::lsfit(p-1, y-int, intercept=FALSE)
   lim <- as.numeric(int-m$coef)
   ss <- sum(m$residuals^2)
   if(lim<0 | lim>1) {
@@ -79,7 +79,7 @@ findlim <- function(p, y, int) {
 }
 
 findint <- function(p, y, lim) {
-  m <- lsfit(p, y-lim, intercept=FALSE)
+  m <- stats::lsfit(p, y-lim, intercept=FALSE)
   int <- as.numeric(lim+m$coef)
   ss <- sum(m$residuals^2)
   if(int<0 | int>1) {
