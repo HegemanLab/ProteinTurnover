@@ -1,12 +1,12 @@
 Package: ProteinTurnover
-Version: 0.9.1
-Date: 2015-07-16
+Version: 0.9.2
+Date: 2017-06-06
 Title: Protein Turnover Experiment Analysis
 Description: Analyze data from protein turnover experiments using labeled
     isotopes.
-Author: Aaron Rendahl <arendahl@stat.umn.edu>, Sandy Weisberg
-    <sandy@stat.umn.edu>, Thomas McGowan <mcgo0092@umn.edu>
-Maintainer: Aaron Rendahl <arendahl@stat.umn.edu>
+Author: Aaron Rendahl <rend0020@sumn.edu>, Sandy Weisberg
+    <sandy@umn.edu>, Thomas McGowan <mcgo0092@umn.edu>
+Maintainer: Aaron Rendahl <rend0020@umn.edu>
 Depends:
     R (>= 3.2.0)
 Imports:
