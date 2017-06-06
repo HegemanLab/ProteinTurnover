@@ -139,8 +139,8 @@ score.dev<-function(obj, level=0.05) {
   ndays <- length(unique(obj$data$Day))
   deviance.byday <- with(obj$data, tapply(deviance.fit, Day, sum))
   h2<-function(NN, b=7, c=0.5) {100*exp(-b/NN^c)}
-  N1 <- qchisq(level, obj$df.fit, lower.tail=FALSE)/obj$deviance.fit
-  N2 <- qchisq(level, obj$df.fit/ndays, lower.tail=FALSE)/deviance.byday
+  N1 <- stats::qchisq(level, obj$df.fit, lower.tail=FALSE)/obj$deviance.fit
+  N2 <- stats::qchisq(level, obj$df.fit/ndays, lower.tail=FALSE)/deviance.byday
   out<-list(overall=h2(N1), time=h2(N2))
   class(out)<-c("pepscore",class(out))
   out
@@ -152,8 +152,8 @@ score.N <- function (obj, level=0.05) {
     obj<-pepfittest(obj)
     ndays <- length(unique(obj$data$Day))
     deviance.byday <- with(obj$data, tapply(deviance.fit, Day, sum))
-    N1 <- qchisq(level, obj$df.fit, lower.tail = FALSE)/obj$deviance.fit
-    N2 <- qchisq(level, obj$df.fit/ndays, lower.tail = FALSE)/deviance.byday
+    N1 <- stats::qchisq(level, obj$df.fit, lower.tail = FALSE)/obj$deviance.fit
+    N2 <- stats::qchisq(level, obj$df.fit/ndays, lower.tail = FALSE)/deviance.byday
     out <- list(overall = N1, time = N2)
     class(out) <- c("pepscore", class(out))
     out
@@ -213,7 +213,7 @@ pepsim<-function(object, Nobs=1/pepfittest(object)$sigma2, Nrep=10) {
     fit <- getFitFor(object, j, x)[,"total"]
     fit.p <- fit/sum(fit)
     foo<-matrix(sample(x, Nobs*Nrep, replace=TRUE, prob=fit.p), nrow=Nobs, ncol=Nrep)
-    sim.count<-apply(foo, 2, function(a) xtabs(~factor(a, labels=x, levels=x)))
+    sim.count<-apply(foo, 2, function(a) stats::xtabs(~factor(a, labels=x, levels=x)))
     out<-rbind(out, data.frame(TimePoint=day, Channel=x, RelAb=sim.count))
   }
   out<-list(sim=out, Nobs=Nobs, Nrep=Nrep, parent=object)
@@ -239,7 +239,7 @@ plot.pepsim<-function(x, n=30, ...) {
   obs$proportion <- obs$proportion * object$Nobs
   newdata <- merge(newdata, obs)
   newdata <- newdata[order(newdata$TimePoint, newdata$Channel),]
-  f<-as.formula(paste(paste(paste("RelAb",1:n, sep="."), collapse="+"),"+ proportion ~ Channel|factor(TimePoint)"))
+  f<-stats::as.formula(paste(paste(paste("RelAb",1:n, sep="."), collapse="+"),"+ proportion ~ Channel|factor(TimePoint)"))
   usecol <- c(rep("grey", n), "red")
   lattice::xyplot(f, data=newdata, type="l", ylab="Abundance",
          as.table=TRUE,
@@ -329,13 +329,13 @@ plot.pepsimtest<-function(x, ylim, ...) {
   xmax <- max(c(sim, obs)*1.1)
   xx <- 0.001
   xrange <- range(sim*1.05,
-                  qchisq(c(xx,1-xx), df.fit),
-                  qchisq(c(xx,1-xx), df.sim))
+                  stats::qchisq(c(xx,1-xx), df.fit),
+                  stats::qchisq(c(xx,1-xx), df.sim))
 
-  d <- density(sim, from=xrange[1], to=xrange[2])
+  d <- stats::density(sim, from=xrange[1], to=xrange[2])
   dd <- data.frame(x=d$x, density=d$y)
-  dd$red <- dchisq(dd$x, df.fit)
-  dd$red2 <- dchisq(dd$x, df.sim)
+  dd$red <- stats::dchisq(dd$x, df.fit)
+  dd$red2 <- stats::dchisq(dd$x, df.sim)
 
   if(missing(ylim))
     ylim <- c(0, max(dd$density, dd$red, dd$red2)*1.05)
@@ -398,7 +398,7 @@ getF <- function(pa, pb) {
   d.dev <- (pa$deviance.fit - pb$deviance.fit)
   d.df <- (pa$df.fit - pb$df.fit)
   FF <- (d.dev/d.df)/pb$sigma2
-  pp <- pf(FF, d.df, pb$df.fit, lower.tail=FALSE)
+  pp <- stats::pf(FF, d.df, pb$df.fit, lower.tail=FALSE)
   data.frame(F=FF, ndf=d.df, ddf=pb$df.fit, p.value=pp, 
              deviance1=pa$deviance.fit, df1=pa$df.fit,
              deviance2=pb$deviance.fit, df2=pb$df.fit,
