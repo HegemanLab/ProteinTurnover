@@ -12,21 +12,15 @@
 #' Test a pepfit.  This is usually not run alone, as it is included in the summary of a pepfit.
 #'
 #' @param object a pepfit object
-#' @param level The significance level to compute the associated sample size for
-#' @param N The sample size to compute the associated p value for
 #' @return   A list of class pepfittest, with elements
-#'  \item{statistic}{change in deviance from the full model to the
-#'    fitted model}
-#'  \item{df}{change in degrees of freedom}
 #'  \item{deviance.fit}{deviance of the fitted model}
-#'  \item{deviance.full}{deviance of the full model}
-#'  \item{deviance.byday}{deviance for each day, separately}
+#'  \item{deviance.null}{deviance of the null model}
+#'  \item{X2}{Pearson X^2 of the fitted model}
+#'  \item{nobs}{number of observations in data set}
 #'  \item{df.fit}{degrees of freedom for the fitted model}
-#'  \item{df.full}{degrees of freedom for the full model}
-#'  \item{p.value}{p.value associated with the desired sample size}
-#'  \item{N}{the sample size used to compute the p.value}
-#'  \item{N.value}{the sample size associated with the desired significance level}
-#'  \item{level}{the significance level used to compute N.value}
+#'  \item{df.null}{degrees of freedom for the null model}
+#'  \item{sigma2}{the quasi-multinomial scaling paramter}
+#'  \item{R2}{the Nagelkerke R^2}
 #'  \item{data}{observed, expected, and deviance values for each observation}
 #' @seealso   \code{\link{pepfit}}
 #' @examples
@@ -104,7 +98,6 @@ print.pepfittest<-function(x, sig.digits=5, ...) {
 #' @name score
 #' @param obj a pepfit object
 #' @param level   significance level to use to get associated sample size
-#' @param N sample size to use to get associated significance level
 #' @return  \item{overall}{Overall Score}
 #'  \item{byday}{Score for each day separately}
 #' @seealso   \code{\link{pepfit}}
@@ -141,11 +134,13 @@ score.visual <- function(obj) {
 
 #' @rdname score
 #' @export
-score.dev<-function(obj, level=0.05, N=1000) {
-  obj<-pepfittest(obj, level=level, N=N)
+score.dev<-function(obj, level=0.05) {
+  obj<-pepfittest(obj)
+  ndays <- length(unique(obj$data$Day))
+  deviance.byday <- with(obj$data, tapply(deviance.fit, Day, sum))
   h2<-function(NN, b=7, c=0.5) {100*exp(-b/NN^c)}
-  N1 <- qchisq(obj$level, obj$df, lower.tail=FALSE)/obj$stat
-  N2 <- qchisq(obj$level, obj$df/4, lower.tail=FALSE)/obj$deviance.byday
+  N1 <- qchisq(level, obj$df.fit, lower.tail=FALSE)/obj$deviance.fit
+  N2 <- qchisq(level, obj$df.fit/ndays, lower.tail=FALSE)/deviance.byday
   out<-list(overall=h2(N1), time=h2(N2))
   class(out)<-c("pepscore",class(out))
   out
@@ -153,11 +148,12 @@ score.dev<-function(obj, level=0.05, N=1000) {
 
 #' @rdname score
 #' @export
-score.N <- function (obj, level=0.05, N=1000) 
-{
-    obj<-pepfittest(obj, level=level, N=N)  
-    N1 <- qchisq(level, obj$df, lower.tail = FALSE)/obj$stat
-    N2 <- qchisq(level, obj$df/4, lower.tail = FALSE)/obj$deviance.byday
+score.N <- function (obj, level=0.05) {
+    obj<-pepfittest(obj)
+    ndays <- length(unique(obj$data$Day))
+    deviance.byday <- with(obj$data, tapply(deviance.fit, Day, sum))
+    N1 <- qchisq(level, obj$df.fit, lower.tail = FALSE)/obj$deviance.fit
+    N2 <- qchisq(level, obj$df.fit/ndays, lower.tail = FALSE)/deviance.byday
     out <- list(overall = N1, time = N2)
     class(out) <- c("pepscore", class(out))
     out
@@ -259,6 +255,7 @@ plot.pepsim<-function(x, n=30, ...) {
 #' @param ask   Since this may take a while, it will ask for permission before
 #'   starting.  Disable with ask=FALSE.
 #' @param n   The number of simulations to fit models to.
+#' @param model A pepfit object with the model that you want to fit the simulated data to.
 #' @return   A list of class "pepsimtest" containing:
 #'  \item{sim.statistic}{The deviances from the fitted models for each
 #'    simulation}
@@ -365,8 +362,6 @@ plot.pepsimtest<-function(x, ylim, ...) {
 #' 
 #' @param pepfit1 The first fitted model
 #' @param pepfit2 The second fitted model
-#' @param N The sample size to use when computing the corresponding p-value.
-#' @param level The significance level to use when computing the corresponding sample size.
 #' @param sig.digits  Number of significant digits to report.
 #' @param x A pepcompare object
 #' @param \dots Ignored, here for consistency with generic print function
@@ -387,31 +382,35 @@ plot.pepsimtest<-function(x, ylim, ...) {
 #'     C = 45, H = 73, O = 15), M = "one")
 #'  pepcompare(a0, a2)
 #' @export
-pepcompare<-function(pepfit1, pepfit2, N=1000, level=0.05, sig.digits=5) {
+pepcompare<-function(pepfit1, pepfit2, sig.digits=5) {
   t1<-m1<-pepfittest(pepfit1)
   t2<-m2<-pepfittest(pepfit2)
-  if(m1$df.fit > m2$df.fit) {
+  if(m1$df.fit < m2$df.fit) {
     t1<-m2
     t2<-m1
   }
-  statistic <- t1$deviance.fit - t2$deviance.fit
-  df <- t2$df.fit - t1$df.fit
-  out <- data.frame(deviance=c(m1$deviance.fit, m2$deviance.fit, statistic), df=c(m1$df, m2$df, df))
-  rownames(out) <- c("model1", "model2", "change")
-  if(df>0) {
-    p.value <- pchisq(statistic*N, df, lower.tail=FALSE)
-    N.value <- qchisq(level, df, lower.tail=FALSE)/statistic
-  }
-  out <- list(deviance=out, N=N, p.value=p.value, level=level, N.value=N.value, sig.digits=sig.digits)
-  structure(out, class=c("pepcompare","list"))
+  out <- getF(t1, t2)
+  out$sig.digits <- sig.digits
+  structure(out, class=c("pepcompare", class(out)))
+}
+
+getF <- function(pa, pb) {
+  d.dev <- (pa$deviance.fit - pb$deviance.fit)
+  d.df <- (pa$df.fit - pb$df.fit)
+  FF <- (d.dev/d.df)/pb$sigma2
+  pp <- pf(FF, d.df, pb$df.fit, lower.tail=FALSE)
+  data.frame(F=FF, ndf=d.df, ddf=pb$df.fit, p.value=pp, 
+             deviance1=pa$deviance.fit, df1=pa$df.fit,
+             deviance2=pb$deviance.fit, df2=pb$df.fit,
+             sigma2=pb$sigma2)
 }
 
 #' @rdname pepcompare
 #' @export
 print.pepcompare <- function(x, sig.digits=x$sig.digits, ...) {
-  cat("Model 1 Deviance:", signif(x$deviance$deviance[1], sig.digits), "* N, with", x$deviance$df[1], "df\n")
-  cat("Model 2 Deviance:", signif(x$deviance$deviance[2], sig.digits), "* N, with", x$deviance$df[2], "df\n")
-  cat("  Test Statistic:", signif(x$deviance$deviance[3], sig.digits), "* N, with", x$deviance$df[3], "df\n")
-  cat("with N=", x$N, ", the p-value is ", signif(x$p.value, sig.digits), "\n", sep="")
-  cat("for a p.value of ", x$level, ", N would be ", round(x$N.value,1), "\n", sep="")
+  cat("Model 1 Deviance: ", signif(x$deviance1, sig.digits), ", with ", x$df1, " df\n", sep="")
+  cat("Model 2 Deviance: ", signif(x$deviance2, sig.digits), ", with ", x$df2, " df\n", sep="")
+  cat("          Sigma2: ", signif(x$sigma2, sig.digits), ", with ", x$df2, " df\n", sep="")
+  cat("     F Statistic: ", signif(x$F, sig.digits), ", with ", x$ndf, "/", x$ddf, " df\n", sep="")
+  cat("         p-value: ", signif(x$p.value, sig.digits), "\n", sep="")
 }

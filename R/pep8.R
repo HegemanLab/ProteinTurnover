@@ -359,7 +359,6 @@ parmatrix <- function(pepfit, default=TRUE, as.df=FALSE) {
 #' a <- pepfit(data=isodata,
 #' Elements=list(N=12,C=45,H=73,O=15))
 #' summary(a)
-#' summary(a, level=0.1, N=100)
 #' @export
 summary.pepfit <- function(object, digits=3, ...) {
   out <- list(par=object$par,
