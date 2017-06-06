@@ -35,7 +35,7 @@
 #'      C = 45, H = 73, O = 15))
 #' pepfittest(a0)
 #' @export
-pepfittest<-function(object, level=0.05, N=1000) {
+pepfittest<-function(object) {
   days <- sort(unique(object$Day))
   ndays <- length(days)
   data <- NULL
@@ -46,24 +46,25 @@ pepfittest<-function(object, level=0.05, N=1000) {
     y <- object$RelAb[sel]    
     obs <- y/sum(y)
     exp <- getFitFor(object, j, x)[,"total"]
-    dev.full <- -2*ifelse(obs==0, 0, obs*log(obs))
-    dev.fit  <- -2*ifelse(obs==0, 0, obs*log(exp))
-    data <- rbind(data, data.frame(Day=day, x=x, y=y, obs=obs, exp=exp,
-                           deviance.full=dev.full, deviance.fit=dev.fit))
+    null <- 1/length(x)
+    data <- rbind(data, data.frame(Day=day, x=x, y=y, obs=obs, exp=exp, null=null))
   }
-  deviance.fit  <- sum(data$deviance.fit)
-  deviance.full <- sum(data$deviance.full)
-  stat <- deviance.fit - deviance.full
-  df.fit <- length(object$par)
-  df.full <- length(object$Count)-length(unique(object$Day))
-  df <- df.full-df.fit
-  p.value <- pchisq(stat*N, df, lower.tail=FALSE)
-  N.value <- qchisq(level, df, lower.tail=FALSE)/stat
-  byday <- with(data, sapply(split(deviance.fit-deviance.full, Day),sum))
-  out<-list(statistic=stat, df=df,
-            deviance.fit=deviance.fit, deviance.full=deviance.full, deviance.byday=byday,
-            df.fit=df.fit, df.full=df.full,
-            p.value=p.value, N=N, N.value=N.value, level=level, data=data)
+  data <- within(data, {
+    deviance.full <- -2*ifelse(obs==0, 0, obs*log(obs))
+    deviance.fit  <- -2*obs*log(exp) - deviance.full
+    deviance.null <- -2*obs*log(null) - deviance.full
+    Pearson.r <- (obs - exp)/sqrt(exp)
+    X2 <- Pearson.r^2
+    rm(deviance.full)
+  })
+  nobs <- nrow(data)
+  out <- as.list(colSums(data[c("deviance.fit", "deviance.null", "X2")]))
+  out <- c(out, list(nobs=nobs, 
+                     df.fit = nobs - length(object$par),
+                     df.null = nobs - ndays))
+  out$sigma2 <- with(out, X2/df.fit)
+  out$R2 <- with(out, (1-exp((deviance.fit-deviance.null)/nobs))/(1-exp(-deviance.null/nobs)))
+  out$data <- data
   class(out)<-c("pepfittest", class(out))
   out
 }
@@ -75,12 +76,10 @@ pepfittest<-function(object, level=0.05, N=1000) {
 #' @export
 print.pepfittest<-function(x, sig.digits=5, ...) {
   with(x, {
-    cat("Fitted Deviance:", signif(deviance.fit, sig.digits), "* N, with", df.fit, "df\n")
-    cat("  Full Deviance:", signif(deviance.full, sig.digits), "* N, with", df.full, "df\n")
-
-    cat(" Test Statistic:", signif(statistic, sig.digits), "* N, with", df, "df\n")
-    cat("with N=", N, ", the p-value is ", signif(p.value, sig.digits), "\n", sep="")
-    cat("for a p.value of ", level, ", N would be ", round(N.value,1), "\n", sep="")
+    cat("Fitted Deviance: ", signif(deviance.fit, sig.digits), ", with ", df.fit, " df\n", sep="")
+    cat("  Null Deviance: ", signif(deviance.null, sig.digits), ", with ", df.null, " df\n", sep="")
+    cat(sprintf("X2 = %s, sigma2 = %s, R2 = %s\n", 
+            signif(X2, sig.digits), signif(sigma2, sig.digits), signif(R2, sig.digits)))
   })
 }
 
@@ -207,7 +206,8 @@ print.pepscore <- function(x, ...) {
 #' a0.sim <- pepsim(a0, Nrep = 50)
 #' plot(plot(a0.sim))
 #' @export
-pepsim<-function(object, Nobs=1000, Nrep=10) {
+pepsim<-function(object, Nobs=1/pepfittest(object)$sigma2, Nrep=10) {
+  Nobs <- floor(Nobs)
   days <- sort(unique(object$data$TimePoint))
   out <- NULL
   for(j in seq_along(days)) {
@@ -239,9 +239,11 @@ plot.pepsim<-function(x, n=30, ...) {
   object <- x
   n <- min(n, object$Nrep)
   newdata<-object$sim[1:(n+2)]
-  obs <- object$parent$data$proportion
-  newdata$obs <- obs * object$Nobs
-  f<-as.formula(paste(paste(paste("RelAb",1:n, sep="."), collapse="+"),"+ obs ~ Channel|factor(TimePoint)"))
+  obs <- object$parent$data[,c("TimePoint", "Channel", "proportion")]
+  obs$proportion <- obs$proportion * object$Nobs
+  newdata <- merge(newdata, obs)
+  newdata <- newdata[order(newdata$TimePoint, newdata$Channel),]
+  f<-as.formula(paste(paste(paste("RelAb",1:n, sep="."), collapse="+"),"+ proportion ~ Channel|factor(TimePoint)"))
   usecol <- c(rep("grey", n), "red")
   lattice::xyplot(f, data=newdata, type="l", ylab="Abundance",
          as.table=TRUE,
@@ -274,33 +276,33 @@ plot.pepsim<-function(x, n=30, ...) {
 #' plot(a0.test.sim)
 #' }
 #' @export
-pepsimtest<-function(object, ask=TRUE, n=object$Nrep) {
+pepsimtest<-function(object, ask=TRUE, n=object$Nrep, model=object$parent) {
   n <- min(n, object$Nrep)
   if(ask) {
     if (!is.null(object$parent$time)) {
-      cat("Expected Time for", n, "simulations: ", object$parent$time[3]*n,"sec\n")
+      cat("Expected Time for", n, "simulations:", model$time[3]*n,"sec\n")
     } else {
       cat("This may take a very long; there are", n, "simulations to run.\n")
     }
-    ans<-readline("Do you want to proceed? [yes/no]")
+    ans<-readline("Do you want to proceed? [yes/no] ")
     if(ans!="yes") {
       cat("Simulation Test Aborted.\n")
       return(invisible(NULL))
     }
   }
-  out<-numeric(n)
-  for(i in 1:n) {
+  outm <- do.call(rbind, lapply(1:n, function(i) {
     cat("starting", i, "of", n, "\n")
     s1<-pepfit(TimePoint=object$sim$TimePoint,
                RelAb=object$sim[,i+2],
                Channel=object$sim$Channel,
                Elements=object$parent$Elements,
                Abundance=object$parent$Abundance,
-               setup=object$parent$setup )
-    out[i]<-pepfittest(s1)$statistic
-  }
-  t0 <- pepfittest(object$parent)
-  out <- list(sim.statistic=out, obs.test=pepfittest(object$parent), sim=object)
+               setup=function(...) {model$p} )
+    unlist(pepfittest(s1)[1:8])
+  }))
+  out <- list(sim.test=as.data.frame(outm), 
+              obs.test=as.data.frame(pepfittest(object$parent)[1:8]), 
+              sim.data=object)
   class(out) <- c("pepsimtest", class(out))
   out
 }
@@ -310,10 +312,9 @@ pepsimtest<-function(object, ask=TRUE, n=object$Nrep) {
 #' @export
 print.pepsimtest<-function(x, ...) {
   object <- x
-  cat("simulated mean:", mean(object$sim.statistic),"\n")
-  cat("simulated sd:", sd(object$sim.statistic), "\n")
-  cat("observed test statistic:", object$obs.test$statistic, "\n")
-  ts <- mean(object$sim.statistic > object$obs.test$statistic)
+  cat("mean simulated deviance:", mean(object$sim.test$deviance.fit),"\n")
+  cat("observed deviance:", object$obs.test$deviance.fit, "\n")
+  ts <- mean(object$sim.test$deviance.fit > object$obs.test$deviance.fit)
   if(ts==0) {ts<-paste("<", 1/length(object$sim.statistic))}
   cat("simulated p-value:", ts, "\n")
 }
@@ -324,29 +325,30 @@ print.pepsimtest<-function(x, ...) {
 #' @export
 plot.pepsimtest<-function(x, ylim, ...) {
   object <- x
-  Nobs <- object$sim$Nobs
-  xmax <- max(c(object$sim.statistic, object$obs.test$statistic)*1.1*Nobs)
-
-  sim <- object$sim.statistic*Nobs
+  sim <- object$sim.test$deviance.fit/object$sim.test$sigma2
+  obs <- object$obs.test$deviance.fit/object$obs.test$sigma2
+  df.fit <- object$obs.test$df.fit
+  df.sim <- mean(sim)
+  xmax <- max(c(sim, obs)*1.1)
   xx <- 0.001
-  xrange <- range(sim, object$obs.test$statistic*Nobs*1.05,
-              qchisq(c(xx,1-xx), object$obs.test$df),
-              qchisq(c(xx,1-xx), mean(object$sim.statistic*Nobs)) )
+  xrange <- range(sim*1.05,
+                  qchisq(c(xx,1-xx), df.fit),
+                  qchisq(c(xx,1-xx), df.sim))
 
   d <- density(sim, from=xrange[1], to=xrange[2])
-  dd <- data.frame(x=d$x, density=d$y)[-1,]
-  dd$red <- dchisq(dd$x, object$obs.test$df)
-  dd$red2 <- dchisq(dd$x, mean(object$sim.statistic*Nobs))
+  dd <- data.frame(x=d$x, density=d$y)
+  dd$red <- dchisq(dd$x, df.fit)
+  dd$red2 <- dchisq(dd$x, df.sim)
 
   if(missing(ylim))
     ylim <- c(0, max(dd$density, dd$red, dd$red2)*1.05)
   
   lattice::xyplot(density~x, data=dd, ylim=ylim, type="l", 
          panel=function(x,y, subscripts=NULL) {
-           lattice::panel.lines(x,y, col="black")
-           lattice::panel.lines(x,dd$red[subscripts], col="red")
+           lattice::panel.lines(x,y, col="red")
+           lattice::panel.lines(x,dd$red[subscripts], col="black")
            lattice::panel.lines(x,dd$red2[subscripts], col="red", lty=2)
-           lattice::panel.abline(v=object$obs.test$statistic * Nobs)
+           lattice::panel.abline(v=obs)
            })
 }
 
