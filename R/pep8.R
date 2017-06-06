@@ -314,6 +314,7 @@ pepfit <- function(TimePoint, RelAb, Channel, data,
   ans1$NatAb <- NatAb
   ans1$p<-p
   ans1$setup<-setup
+  ans1$dots <- list(...)
   ans1$name <- name
   ans1$parmatrix <- p$parmatrix(ans1$par)
   ans1$TimeUnit <- time.unit
