@@ -282,7 +282,7 @@ parsetup.dilution<-function(Day, alpha=c("one","many"), M=c("none","one","many")
 
 #' @rdname parsetup
 #' @export
-parsetup.incorporation <- function(Day, alpha=c("many", "log2k", "log2kplateau", "k", "kplateau"), M=c("none","one","many")) {
+parsetup.incorporation <- function(Day, alpha=c("many", "log2k", "log2kplateau", "k", "kplateau"), M=c("none","one","many"), k.chunk=1) {
     M <- match.arg(M)
     alpha <- match.arg(alpha)
     if(alpha=="many") {
@@ -297,39 +297,56 @@ parsetup.incorporation <- function(Day, alpha=c("many", "log2k", "log2kplateau",
                            pi=list(type="many", default0=0),
                            r=list(default=1, default0=1),
                            M=list(type=M, default0=NA))
-        if(alpha %in% c("kplateau", "log2kplateau")) {
+        plateau <- alpha %in% c("kplateau", "log2kplateau")
+        logk <- !alpha %in% c("k", "kplateau")
+        if(plateau) {
             p$par <- rbind(plateau=c(0.02, 0.01, Inf), p$par)
         }
-        if(alpha %in% c("k", "kplateau")) {
-            p$par <- rbind(k=c(log(2)/mean(p$days), 0.01, Inf), p$par)
+        if(!logk) {
+            kname <- "k"
+            kvals <- c(log(2)/mean(p$days), 0.01, Inf)
         } else {
-            p$par <- rbind(log2k=c(log2(log(2)/mean(p$days)), -Inf, Inf), p$par)
+            kname <- "log2k"
+            kvals <- c(log2(log(2)/mean(p$days)), -Inf, Inf)
         }
-        newp <- function(days, origsetup, plateau=FALSE, logk=TRUE) {
+        names(kvals) <- c("start", "lower", "upper")
+        ks <- do.call(rbind, rep(list(kvals), length(k.chunk)))
+        if(length(k.chunk)==1) {
+            rownames(ks) <- kname
+        } else {
+            rownames(ks) <- paste0(kname, seq_along(k.chunk))
+        }
+        p$par <- rbind(ks, p$par)
+        newp <- function(days, origsetup, plateau=FALSE, logk=TRUE, k.chunk=1) {
             days <- days           
             origsetup <- origsetup
             plateau <- plateau
             logk <- logk
+            k.chunk <- k.chunk
+            nk <- length(k.chunk)
             function(par, default=TRUE) {
                 if(plateau) {
-                    plat <- par[2]
-                    k <- 1:2
+                    plat <- par[nk+1]
+                    k <- 1:(nk+1)
                 } else {
                     plat <- 0
-                    k <- 1
+                    k <- 1:nk
                 }                
                 foo <- origsetup(par[-k], default=default)
                 if(logk) {
-                    foo[,"alpha"] <- plat + (1-plat)*exp(-2^(par[1])*days)                    
+                    k.par <- 2^par[1:nk]
                 } else {
-                    foo[,"alpha"] <- plat + (1-plat)*exp(-par[1]*days)
+                    k.par <- par[1:nk]
                 }
+                tmp <- mapply(function(a,b) a*exp(-b*days), k.chunk, k.par)
+                foo[,"alpha"] <- plat + (1-plat)*rowSums(tmp)
                 foo
             }
         }
         p$parmatrix <- newp(p$days, p$parmatrix,
-                            plateau="plateau" %in% rownames(p$par),
-                            logk="log2k" %in% rownames(p$par))
+                            plateau=plateau,
+                            logk=logk,
+                            k.chunk=k.chunk)
         p
     } 
 }
