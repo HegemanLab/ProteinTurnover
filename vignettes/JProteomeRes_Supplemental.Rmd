@@ -31,7 +31,7 @@ biocLite("xcms")
 
 The ProteinTurnover package is available on GitHub, https://github.com/HegemanLab/ProteinTurnover.
 ```{r, eval=FALSE}
-devtools::install_github(HegemanLab/ProteinTurnover)
+devtools::install_github("HegemanLab/ProteinTurnover")
 ```
 
 ## SECTION 2: Prepare data files
@@ -54,31 +54,32 @@ p <- list()
 ```
 
 Set the number of cores to use. 
-On Windows OS, this should be 1; on Linux, it can be set as 8.
+On Windows OS, this should be 1; on Linux, it can be set as appropriate for your system.
 ```{r}
 p$num.cores <- 1
 ```
 
-Set directories and scaffold file name:
+Set directories and scaffold file name. 
 
 * Set the data file directory.
 * Set the directory that result files should be stored in.
 * Set scaffold file, which should be store in the data directory.
-* Note: For Windows OS users, replace all the \ with \\ from the copy of directory path.
+
+Note: These are treated as relative to the current directory, unless you give a complete path. For Windows OS users, to use subdirectories, replace all the \ with \\ from the copy of directory path.
 
 This is an example data directory:
 ```{r}
-p$dir.data <- "C:\\Users\\USERNAME\\Documents\\mzs"  
+p$dir.data <- "mzs"  
 ```
 
 This is an example result directory:
 ```{r}
-p$dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+p$dir.results <- "Turnover"  
 ```
 
 This is an example peptide file:
 ```{r}
-p$scaffoldfile <- "soluble-FDR.csv"   
+p$scaffoldfile <- "soluble.csv"   
 ```
 
 Set times and corresponding file names:
@@ -187,7 +188,7 @@ save(dat, seqs, p, file=file.path(p$dir.results, "eicdata.Rdata"))
 Reload what we've done so far.
 Skip these two command lines if users just run the above code
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "eicdata.Rdata"))       
 ```
 
@@ -224,7 +225,7 @@ save(dat, seqs, p, file=file.path(p$dir.results, "fit-log2k.Rdata"))
 Load results.
 Skip these two command lines if users just run the above code.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))     
 ```
 
@@ -239,7 +240,7 @@ write.csv(fits, file=file.path(p$dir.results, "fits-log2k.csv"), na="")
 Load what we've done so far.
 Skip these two command lines if users just run the above code.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))     
 ```
 
@@ -257,7 +258,7 @@ out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-log2k")
 ## SECTION 4: Explore each peptide's fit as desired
 Load saved result.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))
 ```
 
@@ -299,7 +300,7 @@ plot(s$curve)
 
 Load saved EIC data.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "eicdata.Rdata"))
 ```
 
