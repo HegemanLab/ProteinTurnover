@@ -64,7 +64,7 @@ getabundance<-function(newab) {
 
 getelementprob<-function(n, p) {
   if(length(p)==2) {
-    elementprob<-dbinom(0:n,n,p[2])
+    elementprob<-stats::dbinom(0:n,n,p[2])
   } else {
     elementprob<-1
     for(i in 1:n) elementprob<-convC(elementprob, p)

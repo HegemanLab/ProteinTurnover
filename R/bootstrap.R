@@ -1,5 +1,5 @@
 sim.fit <- function(fit, N=50) {
-    x <- fitted(fit)
+    x <- stats::fitted(fit)
     tt <- x$total
     pp <- unname(x$proportion)
     tp <- (tt+pp)/2
@@ -14,7 +14,7 @@ sim.fit <- function(fit, N=50) {
     xx <- replicate(N, {
         xx <- unlist(lapply(1:nrow(out), function(i) {
             ## as.vector(arima.sim(list(ar=out$r[i]), out$n[i])*out$sd[i])
-            rnorm(out$n[i], sd=out$sd[i])
+            stats::rnorm(out$n[i], sd=out$sd[i])
         }))
         pmax(pmin(tt+xx*tpq,1),0)
     })
@@ -30,7 +30,7 @@ boot.fit <- function(seq, relAb, fit, N, M, alpha, isotope.method) {
                         isotope.method=isotope.method, se=FALSE)
         fiti$par
     }))
-    rbind(fit=fit$par, boot.fit=colMeans(parboot), boot.se=apply(parboot, 2, sd))
+    rbind(fit=fit$par, boot.fit=colMeans(parboot), boot.se=apply(parboot, 2, stats::sd))
 }
 
 ## plot(tt, type="l")
