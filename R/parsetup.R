@@ -240,7 +240,7 @@ parsetup.full <- function(Day, alpha, r, pi, M, noise) {
   p$M <- make.par(days, M, M.par)
   p$noise <- make.par(days, noise, noise.par)
   ns<-names(p[[1]])
-  p<-lapply(as.list(ns), function(ni) sapply(p, function(pi) pi[[ni]]))
+  p<-lapply(as.list(ns), function(ni) do.call(cbind,lapply(p, function(pi) pi[[ni]])))
   names(p)<-ns
   toadd<-cumsum(c(0,apply(p$ix,2,function(x) {if(all(is.na(x))) 0 else max(x, na.rm=TRUE)}))[1:ncol(p$ix)])
   p$ix <- sweep(p$ix,2,toadd,`+`)
