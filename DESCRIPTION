@@ -21,7 +21,10 @@ Imports:
 Suggests:
     quantreg (>= 5.11),
     MASS (>= 7.3-40),
-    xcms (>= 1.44.0)
+    xcms (>= 1.44.0),
+    knitr,
+    rmarkdown
 License: GPL (>= 3)
 LazyData: true
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr
