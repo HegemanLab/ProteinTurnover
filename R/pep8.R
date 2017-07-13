@@ -59,7 +59,7 @@
 
 dbetabinom <- function(k, N, mu, M) {
   if(is.na(M)) {
-    stats::dbinom(k,N,mu)
+    dbinom(k,N,mu)
   } else {
     alpha <- M*mu
     beta  <- M*(1-mu)
@@ -148,7 +148,7 @@ getRelAb <- function(parmatrix, Day, Count, N, nab, NatAb, norm_channel) {
 fitLogLik2 <- function(par, to.parmatrix, Day, Count, N, nab, NatAb, relab.obs, relab.se, norm_channel) {
     relab.est <- getRelAb(parmatrix=to.parmatrix(par), Day=Day, Count=Count,
                           N=N, nab=nab, NatAb=NatAb, norm_channel=norm_channel)    
-    sum(stats::dnorm(relab.est, mean=relab.obs, sd=relab.se, log=TRUE), na.rm=TRUE)
+    sum(dnorm(relab.est, mean=relab.obs, sd=relab.se, log=TRUE), na.rm=TRUE)
     
 }
 
@@ -178,15 +178,15 @@ fitN <- function(p.obs, p.est) {
             sum(fi*digamma(ai))*n - sum(fi^2*trigamma(ai))*n^2 +
                 sum(n*fi*log(pi))
     }
-    logN <- stats::uniroot(d2, log(c(10, 1e8)), fi=p.obs, pi=p.est)$root
+    logN <- uniroot(d2, log(c(10, 1e8)), fi=p.obs, pi=p.est)$root
     se <- sqrt(-1/d3(logN, p.obs, p.est))
     c(logN=logN, se=se)
 }
 
 #' Fit a model
-#'
+#'  
 #' Fit a model of how mass changes over time of a specific element
-#'
+#'  
 #' @aliases print.pepfit plot.pepfit fitted.pepfit
 #' @param TimePoint The timepoint the observation was taken at
 #' @param RelAb The relative abundance of that observation
@@ -286,13 +286,13 @@ pepfit <- function(TimePoint, RelAb, Channel, data,
   d$proportion <- d$RelAb/tapply(d$RelAb, ts, sum, na.rm=TRUE)[ts]
   usecol <- if(useRelAb) {"RelAb"} else {"proportion"}
   if(method=="binomial") {
-      ans1 <- stats::optim(start.par, fitLoglik, to.parmatrix=p$parmatrix,
+      ans1 <- optim(start.par, fitLoglik, to.parmatrix=p$parmatrix,
                     Day=d$TimePoint, Count=d$Channel, N=N, nab=nab, NatAb=NatAb,
                     LogLik=LogLik1, p.obs=d[[usecol]], 
                     method="L-BFGS-B", control=list(fnscale=-1, maxit=maxit),
                     lower=p$par$lower, upper=p$par$upper, hessian=se)
   } else if(method=="regression") {
-      ans1 <- stats::optim(start.par, fitLogLik2, to.parmatrix=p$parmatrix,
+      ans1 <- optim(start.par, fitLogLik2, to.parmatrix=p$parmatrix,
                     Day=d$TimePoint, Count=d$Channel, N=N, nab=nab, NatAb=NatAb,
                     relab.obs=d$RelAb.obs, relab.se=d$RelAb.se, norm_channel=data$norm_channel,
                     method="L-BFGS-B", control=list(fnscale=-1, maxit=maxit),
@@ -314,7 +314,6 @@ pepfit <- function(TimePoint, RelAb, Channel, data,
   ans1$NatAb <- NatAb
   ans1$p<-p
   ans1$setup<-setup
-  ans1$dots <- list(...)
   ans1$name <- name
   ans1$parmatrix <- p$parmatrix(ans1$par)
   ans1$TimeUnit <- time.unit
@@ -359,6 +358,7 @@ parmatrix <- function(pepfit, default=TRUE, as.df=FALSE) {
 #' a <- pepfit(data=isodata,
 #' Elements=list(N=12,C=45,H=73,O=15))
 #' summary(a)
+#' summary(a, level=0.1, N=100)
 #' @export
 summary.pepfit <- function(object, digits=3, ...) {
   out <- list(par=object$par,
@@ -424,7 +424,7 @@ fitted.pepfit <- function(object, range=0:max(object$data$Channel), ...) {
 plot.pepfit <- function(x, as.table=TRUE, main=x$name,
                         sub=paste("Isotope:", x$Element$name),
                         xlab="Isotope Channel", ylim, ...) {
-  f <- stats::fitted(x)
+  f <- fitted(x)
   if(!is.na(x$TimeUnit)) {
     tp.levels <- paste(x$TimeUnit, sort(unique(f$TimePoint)))
     tp <- paste(x$TimeUnit, f$TimePoint)

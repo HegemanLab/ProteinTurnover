@@ -20,7 +20,7 @@ readProteinPilotFiles <- function(files, times, dir, verbose=TRUE) {
 ## Read single ProteinPilot file
 ## Returns data frame with: ID, Sequence, RT, MW, Z, Conf
 readProteinPilotFile <- function(file) {
-    r <- utils::read.table(file, header=TRUE, sep="\t", quote="", as.is=TRUE, check.names=FALSE)
+    r <- read.table(file, header=TRUE, sep="\t", quote="", as.is=TRUE, check.names=FALSE)
     ## restrict to rows above confidence.level and desired columns
     r <-    r[, c("Accessions", "Sequence", "Time", "Prec MW", "Theor z", "Conf")]
     names(r) <- c("ID",         "Sequence", "RT",   "MW",      "Z",       "Confidence")
@@ -51,7 +51,7 @@ readScaffoldFile <- function(file, times, dir, verbose=TRUE) {
     if(verbose) message("reading Scaffold file ...")
     path <- file
     if(!missing(dir)) path <- file.path(dir, file)
-    r <- utils::read.csv(path, as.is=TRUE, check.names=FALSE)
+    r <- read.csv(path, as.is=TRUE, check.names=FALSE)
     r <- r[,c(
               "Protein accession numbers",
               "Peptide sequence",
@@ -228,10 +228,10 @@ addEICs <- function(dat, files, type=c("mzXML", "rds", "obj"),
             robj <- readRDS(paths[i])
         } else { robj <- files[[i]] }
         if(verbose) message("adding EICs for Time ", time)
-        if(verbose) pb <- utils::txtProgressBar(min = 0, max = length(dat), style = 1)
+        if(verbose) pb <- txtProgressBar(min = 0, max = length(dat), style = 1)
         for(j in seq_along(dat)) {
             dat[[j]] <- addEIC(dat[[j]], robj=robj, time=time)
-            if(verbose) utils::setTxtProgressBar(pb, j) 
+            if(verbose) setTxtProgressBar(pb, j) 
         }
         if(verbose) close(pb)
     }

@@ -4,11 +4,11 @@ isotopeProportion <- function(RelAb, Elements, Abundance=NULL) {
   N <- Elements[[1]]
   k <- 0:(length(RelAb)-1)
   nll <- function(pi) {
-    pjk <- convC(stats::dbinom(k,N,pi), NatAb)[k+1]
+    pjk <- convC(dbinom(k,N,pi), NatAb)[k+1]
     ra0 <- RelAb==0
     -sum(RelAb[!ra0]*log(pjk[!ra0]))
   }
-  stats::optimize(nll, c(0,1))$minimum
+  optimize(nll, c(0,1))$minimum
 }
 
 isotopeProportions <- function(d, ncol.about) {
@@ -33,7 +33,7 @@ getLabeledProportions <- function(d, ncol.about, digits=5) {
 # based on the original version
 #getp0 <- function(x, Elements) {
 #  d <- data.frame(TimePoint=0, RelAb=x, Channel=seq_along(x)-1)
-#  #with(d, {graphics::plot(Channel, RelAb); lines(Channel, RelAb)})
+#  #with(d, {plot(Channel, RelAb); lines(Channel, RelAb)})
 #  p <- pepfit(data=d, Elements=Elements, setup=parsetup.X, Abundance=ab)
 #  unname(p$par)
 #}

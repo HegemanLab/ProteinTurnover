@@ -26,12 +26,12 @@ mclapply.progress <- function(x, FUN, ...,
     .fff <- function(i) {
         if (i==1) {
             ## Child
-            pb <- utils::txtProgressBar(0, numjobs)
+            pb <- txtProgressBar(0, numjobs)
             progress <- 0
             while (progress < numjobs && !isIncomplete(f)) {
                 msg <- readBin(f, "double")
                 progress <- progress + as.numeric(msg)
-                utils::setTxtProgressBar(pb, progress)
+                setTxtProgressBar(pb, progress)
             }
             close(pb)
         } else {
@@ -53,7 +53,7 @@ mclapply.progress <- function(x, FUN, ...,
 }
 
 ## library(parallel)
-## fff <- function(i, n=10000, N=500) {for(k in 1:n) stats::rnorm(N); i}
+## fff <- function(i, n=10000, N=500) {for(k in 1:n) rnorm(N); i}
 ## tmp <- mclapply.progress(1:100, fff, mc.cores=4)
 ## tmp <- mclapply.progress2(1:100, fff, mc.cores=4)
 ## system.time(tmp <- mclapply(1:100, fff, mc.cores=4))

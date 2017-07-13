@@ -3,10 +3,10 @@ lapply.progress <- function(x, FUN, ...) {
     numjobs <- length(x)
     message("Processing ", numjobs, " items, one at a time")
     message("Started ", date())
-    pb <- utils::txtProgressBar(0, numjobs)
+    pb <- txtProgressBar(0, numjobs)
     result <- lapply(seq_along(x), function(i, ...) {
         tmp <- FUN(x[[i]], ...)
-        utils::setTxtProgressBar(pb, i)
+        setTxtProgressBar(pb, i)
         tmp
     })
     close(pb)
@@ -28,12 +28,12 @@ lapply.progress <- function(x, FUN, ...) {
 ##     f <- fifo(tempfile(), open="w+b", blocking=TRUE)
 ##     if (inherits(parallel:::mcfork(), "masterProcess")) {
 ##         ## Child
-##         pb <- utils::txtProgressBar(0, numjobs)
+##         pb <- txtProgressBar(0, numjobs)
 ##         progress <- 0
 ##         while (progress < numjobs && !isIncomplete(f)) {
 ##             msg <- readBin(f, "double")
 ##             progress <- progress + as.numeric(msg)
-##             utils::setTxtProgressBar(pb, progress)
+##             setTxtProgressBar(pb, progress)
 ##         }
 ##         close(pb)
 ##         parallel:::mcexit()
@@ -58,7 +58,7 @@ prepare_dir <- function(x) {
 
 save.table <- function(..., file) {
   prepare_dir(file)
-  utils::write.table(..., file = file)
+  write.table(..., file = file)
 }
 
 # to help in saving lattice graphics
@@ -75,7 +75,7 @@ save.graphic <- function(x, file, dir, color = TRUE, device=c("png", "pdf", "svg
         if(!missing(dir)) f <- file.path(dir, file)
         else f <- file
         prepare_dir(f)
-        x <- graphics::plot(x, ...)                        
+        x <- plot(x, ...)                        
         d <- dim(x)
         dw <- d[1]
         dh <- if(length(d)==1) { 1 } else { d[2] }
@@ -86,10 +86,10 @@ save.graphic <- function(x, file, dir, color = TRUE, device=c("png", "pdf", "svg
         } else if(device=="png") {
             lattice::trellis.device(device, color = color, file = f, width=width, height=height, res=res, units="in")
         }
-        graphics::plot(x, layout=c(dh, dw),
+        plot(x, layout=c(dh, dw),
              panel.width=list(x=panel.width, units="in"),
              panel.height=list(x=panel.height, units="in"))
-        grDevices::dev.off()
+        dev.off()
         list(file=file, width=width, height=height, device=device)
 
     }, error=function(e) list(error=paste("Unable to plot:", e$message)))

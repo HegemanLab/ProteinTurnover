@@ -24,7 +24,7 @@ fitted.pepcurve <- function(object, TimePoint=sort(unique(object$data$TimePoint)
 plot.pepcurve <- function(x, ylab="proportion", ylim=c(0,1), ...) {
   maxtime <- ceiling(max(x$data$TimePoint)*1.2)
   times <- seq(0, maxtime, length=101)
-  fff <- stats::fitted(x, TimePoint=times)
+  fff <- fitted(x, TimePoint=times)
   d <- x$data
   if(! "group" %in% names(d)) { d[["group"]] <- 1 }
   group <- 1 ## also have a global group to prevent note in check
@@ -124,7 +124,7 @@ pepcurve.default <- function(x, nab=NA, fillNA=FALSE, intercept=c(pi=NA, alpha=N
   }
   getint <- function(x, y) {
     ok <- !is.na(x) & !is.na(y)
-    ifelse(stats::coef(stats::lsfit(x[ok], y[ok]))[2]>0, 0, 1)
+    ifelse(coef(lsfit(x[ok], y[ok]))[2]>0, 0, 1)
   }
   out <- list()
   pi0 <- intercept[["pi"]]
