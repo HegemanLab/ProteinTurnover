@@ -1,5 +1,5 @@
 Package: ProteinTurnover
-Version: 0.9.1
+Version: 1.0.0
 Date: 2015-07-16
 Title: Protein Turnover Experiment Analysis
 Description: Analyze data from protein turnover experiments using labeled isotopes.
