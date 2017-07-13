@@ -4,7 +4,7 @@ Date: 2017-07-13
 Title: Protein Turnover Experiment Analysis
 Description: Analyze data from protein turnover experiments using labeled
     isotopes.
-Author: Aaron Rendahl <rend0020@sumn.edu>, Sandy Weisberg
+Author: Aaron Rendahl <rend0020@umn.edu>, Sandy Weisberg
     <sandy@umn.edu>, Thomas McGowan <mcgo0092@umn.edu>
 Maintainer: Aaron Rendahl <rend0020@umn.edu>
 Depends:
