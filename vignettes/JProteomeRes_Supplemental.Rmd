@@ -13,7 +13,7 @@ vignette: >
  knitr::opts_chunk$set(eval=FALSE)
 ```
 
-This vignette contains the code the supplemental script from the J. Proteome Res. article (DOI:10.1021/acs.jproteome.5b00772). After the ProteinTurnover package is installed, the location of the script can be found using the `system.file` command.
+This vignette contains the code the supplemental script from the J. Proteome Res. article ([DOI:10.1021/acs.jproteome.5b00772](http://doi.org/10.1021/acs.jproteome.5b00772)). After the ProteinTurnover package is installed, the location of the script can be found using the `system.file` command.
 
 ```{r, eval=FALSE}
 system.file(package="ProteinTurnover", "extscripts", "JProteomeRes_Supplemental.R")
