@@ -120,7 +120,7 @@ relAbFromCounts <- function(Count, Channel, RT, data, TimePoint,
   relab.est <- relab.se <- NA
   if(method %in% c("lm","rlm", "lqs", "rq")) {
     regression.function <-
-      if(method=="lm") { function(x,y) lm(y~x) }
+      if(method=="lm") { function(x,y) stats::lm(y~x) }
       else if(method=="rlm") { function(x,y) MASS::rlm(y~x, maxit=50) }
       else if(method=="lqs") { function(x,y) MASS::lqs(y~x,method='lms') }
       else if(method=="rq") { function(x,y) quantreg::rq(y~x, tau=0.5) }
@@ -147,15 +147,15 @@ relAbFromCounts <- function(Count, Channel, RT, data, TimePoint,
           x <- x[ok]
           y <- y[ok]
           m <- regression.function(x,y)
-          coefs[idx,] <- coef(m)
-          se[idx,] <- coef(summary(m))[,2]
+          coefs[idx,] <- stats::coef(m)
+          se[idx,] <- stats::coef(summary(m))[,2]
           Rsq[idx] <- summary(m)$r.squared
         } else {
           coefs[idx,] <- se[idx,] <- c(NA, NA)
         }
       }
       if(nboot>0) {
-          boot[idx,] <- rnorm(nboot, mean=coefs[idx,2], sd=se[idx,2])
+          boot[idx,] <- stats::rnorm(nboot, mean=coefs[idx,2], sd=se[idx,2])
       }
     }
     if(nboot>0) {
@@ -183,9 +183,9 @@ relAbFromCounts <- function(Count, Channel, RT, data, TimePoint,
       RT <- factor(RT)
       Channel <- factor(Channel)
     })
-    m <- lm(logCount ~ RT + Channel, data=dx)
-    coefs <- coef(m)
-    d.long$predicted[d.long$use>0] <- predict(m, newdata=dx)
+    m <- stats::lm(logCount ~ RT + Channel, data=dx)
+    coefs <- stats::coef(m)
+    d.long$predicted[d.long$use>0] <- stats::predict(m, newdata=dx)
     relab <- as.numeric(c(1,exp(coefs[grepl("Channel", names(coefs))])))
     relab <- relab/sum(relab)
     relab <- relab/relab[norm_channel]

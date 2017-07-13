@@ -5,16 +5,12 @@
 \alias{print.pepfittest}
 \title{Test a pepfit}
 \usage{
-pepfittest(object, level = 0.05, N = 1000)
+pepfittest(object)
 
 \method{print}{pepfittest}(x, sig.digits = 5, ...)
 }
 \arguments{
 \item{object}{a pepfit object}
-
-\item{level}{The significance level to compute the associated sample size for}
-
-\item{N}{The sample size to compute the associated p value for}
 
 \item{x}{the pepfittest object}
 
@@ -24,18 +20,14 @@ pepfittest(object, level = 0.05, N = 1000)
 }
 \value{
 A list of class pepfittest, with elements
- \item{statistic}{change in deviance from the full model to the
-   fitted model}
- \item{df}{change in degrees of freedom}
  \item{deviance.fit}{deviance of the fitted model}
- \item{deviance.full}{deviance of the full model}
- \item{deviance.byday}{deviance for each day, separately}
+ \item{deviance.null}{deviance of the null model}
+ \item{X2}{Pearson X^2 of the fitted model}
+ \item{nobs}{number of observations in data set}
  \item{df.fit}{degrees of freedom for the fitted model}
- \item{df.full}{degrees of freedom for the full model}
- \item{p.value}{p.value associated with the desired sample size}
- \item{N}{the sample size used to compute the p.value}
- \item{N.value}{the sample size associated with the desired significance level}
- \item{level}{the significance level used to compute N.value}
+ \item{df.null}{degrees of freedom for the null model}
+ \item{sigma2}{the quasi-multinomial scaling paramter}
+ \item{R2}{the Nagelkerke R^2}
  \item{data}{observed, expected, and deviance values for each observation}
 }
 \description{
