@@ -1,6 +1,6 @@
 ---
 title: "Supplemental Script from J. Proteome Res. article"
-author: "Kai-Ting Fan, adapted by Aaron Rendahl"
+author: "Kai-Ting Fan and Aaron Rendahl"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -15,8 +15,14 @@ vignette: >
 
 This vignette contains the code the supplemental script from the J. Proteome Res. article ([DOI:10.1021/acs.jproteome.5b00772](http://doi.org/10.1021/acs.jproteome.5b00772)). After the ProteinTurnover package is installed, the location of the script can be found using the `system.file` command.
 
-```{r, eval=FALSE}
+```{r}
 system.file(package="ProteinTurnover", "extscripts", "JProteomeRes_Supplemental.R")
+```
+
+It could be copied to the current directory from with R using `file.copy`.
+```{r}
+f <- system.file(package="ProteinTurnover", "extscripts", "JProteomeRes_Supplemental.R")
+file.copy(f, ".")
 ```
 
 ## SECTION 1: Install R packages
@@ -24,13 +30,13 @@ Install package "ProteinTurnover" and other required packages.
 R-3.2.0 or higher is required.
 
 To access mzXML files, the package "xcms" from Bioconductor is also required. For installation:
-```{r, eval=FALSE}
+```{r}
 source("http://bioconductor.org/biocLite.R")
 biocLite("xcms")  
 ```
 
 The ProteinTurnover package is available on GitHub, https://github.com/HegemanLab/ProteinTurnover.
-```{r, eval=FALSE}
+```{r}
 devtools::install_github("HegemanLab/ProteinTurnover")
 ```
 
@@ -44,7 +50,7 @@ devtools::install_github("HegemanLab/ProteinTurnover")
 
 ## SECTION 3: Run ProteinTurnover
 Load library.
-```{r}
+```{r, eval=TRUE}
 library(ProteinTurnover)
 ```
 
@@ -233,7 +239,10 @@ Get the parameter fits for those succeeded and write to file.
 ```{r}
 fits <- getPars(seqs)
 write.csv(fits, file=file.path(p$dir.results, "fits-log2k.csv"), na="")
+## There were 50 or more warnings (use warnings() to see the first 50) 
 ```
+
+The warnings in this case are all "In sqrt(diag(s$fit$vcov)) : NaNs produced"; that means that it could not compute a standard deviation for at least one of the parameters for that fit.
 
 ### Make HTML output for each seq
 
@@ -252,24 +261,43 @@ if(!is.null(p$num.cores)) { options(mc.cores=p$num.cores) }
 Make the output.
 ```{r}
 out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-log2k")
+## Creating output for sequences with errors (these are faster).
+## Processing 866 items, in parallel on 8 cores
+## Started Thu Jul 13 15:00:59 2017                                                     ## ================================================================================     ## Ended   Thu Jul 13 15:01:36 2017; elapsed time: 37 secs
+## Creating output for sequences without errors.
+## Processing 988 items, in parallel on 8 cores
+## Started Thu Jul 13 15:01:36 2017                                                     ## ================================================================================
+## Ended   Thu Jul 13 15:14:40 2017; elapsed time: 784 secs
+## There were 50 or more warnings (use warnings() to see the first 50)  
 ```
 
+The warnings here are agin "In sqrt(diag(s$fit$vcov)) : NaNs produced".
+
+Results are currently (13 Jul 2017) available here:
+[http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-log2k.html](http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-log2k.html)
 
 ## SECTION 4: Explore each peptide's fit as desired
 Load saved result.
+
 ```{r}
-dir.results <- "Turnover"  
+dir.results <- "Turnover"
 load(file.path(dir.results, "fit-log2k.Rdata"))
+```
+
+```{r, eval=TRUE, include=FALSE}
+download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-log2k.Rdata", "fit-log2k.Rdata")
+load("fit-log2k.Rdata")
+file.remove("fit-log2k.Rdata")
 ```
 
 Pick a fit to explore.
 Put the index number of whichever peptide you want to explore, eg. No.2 peptide in the output file.
-```{r}
+```{r, eval=TRUE}
 s <- seqs[[2]]
 ```
 
 Get usual output for the fit.
-```{r}
+```{r, eval=TRUE}
 s$fit
 score.visual(s$fit)
 ```
@@ -277,23 +305,18 @@ score.visual(s$fit)
 Make desired pictures for this No.2 peptide:
 
 Make regression plots:
-```{r}
+```{r, fig.width=15, fig.height=5, eval=TRUE}
 regressionPlot(s$relAb)
 ```
 
 Make eic plots:
-```{r}
+```{r, fig.width=15, fig.height=5, eval=TRUE}
 plot(s$relAb)
 ```
 
 Make MLE plots:
-```{r}
+```{r, eval=TRUE, fig.width=7, fig.height=3}
 plot(s$fit)
-```
-
-Make the plot of non-linear regression curve:
-```{r}
-plot(s$curve)
 ```
 
 ## SECTION 5: Use alpha model as "many" instead
@@ -323,6 +346,8 @@ seqs <- mclapply.progress(seqs, function(seq) {
   curve <- makeCurve(fit, plim=p$plim, isotope.method=p$isotope.method)
   list(seq=seq, relAb=relAb, fit=fit, curve=curve)
 })
+## Processing 1854 items, in parallel on 8 cores
+## Started Thu Jul 13 15:27:36 2017                                                     ## ================================================================================     ## Ended   Thu Jul 13 15:31:14 2017; elapsed time: 218 secs
 ```
 
 Save results so far.
@@ -339,4 +364,40 @@ write.csv(fits, file=file.path(p$dir.results, "fits-many.csv"), na="")
 Output to HTML:
 ```{r}
 out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-many")
+## Creating output for sequences with errors (these are faster).
+## Processing 853 items, in parallel on 8 cores
+## Started Thu Jul 13 15:35:47 2017
+## ================================================================================
+## Ended   Thu Jul 13 15:36:12 2017; elapsed time: 25 secs
+## Creating output for sequences without errors.
+## Processing 1001 items, in parallel on 8 cores
+## Started Thu Jul 13 15:36:12 2017
+## ================================================================================
+## Ended   Thu Jul 13 15:50:19 2017; elapsed time: 847 secs  
+```
+
+Results are currently (13 Jul 2017) available here:
+[http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-many.html](http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-many.html)
+
+```{r, eval=TRUE, include=FALSE}
+download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-many.Rdata", "fit-many.Rdata")
+load("fit-many.Rdata")
+file.remove("fit-many.Rdata")
+```
+
+We'll compare some of the output.
+```{r, eval=TRUE}
+s <- seqs[[2]]
+s$fit
+score.visual(s$fit)
+```
+
+Make MLE plots:
+```{r, eval=TRUE, fig.width=7, fig.height=3}
+plot(s$fit)
+```
+
+Make the plot of non-linear regression curve.
+```{r, eval=TRUE, fig.width=6, fig.height=3}
+plot(s$curve)
 ```
