@@ -9,8 +9,6 @@ source("http://bioconductor.org/biocLite.R")
 biocLite("xcms")  
 
 ## The ProteinTurnover package is available on GitHub, https://github.com/HegemanLab/ProteinTurnover
-## use devtools::install to install:
-## > devtools::install_github("HegemanLab/ProteinTurnover")
 
 #####################################################################
 ## SECTION 2: Prepare data files
@@ -31,23 +29,21 @@ library(ProteinTurnover)
 p <- list()
 
 ## Set the number of cores to use
-## On Windows OS, this should be 1; on Linux, it can be set as appropriate for your system.
-p$num.cores <- 8
+## On Windows OS, this should be 1; on Linux, it can be set as 8
+p$num.cores <- 1
 
 ## Set the data file directory 
 ## Set the directory that result files should be stored in
 ## Set scaffold file, which should be store in the data directory
-## Note: These are treated as relative to the current directory, 
-## unless you give a complete path. For Windows OS users, to use 
-## subdirectories, replace all the \ with \\ from the copy of directory path.
+## Note: For Windows OS users, replace all the \ with \\ from the copy of directory path
 
-p$dir.data <- "mzs"  
+p$dir.data <- "C:\\Users\\USERNAME\\Documents\\mzs"  
 # This is an example data directory 
 
-p$dir.results <- "Turnover"  
+p$dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
 # This is an example result directory
 
-p$scaffoldfile <- "soluble.csv"   
+p$scaffoldfile <- "soluble-FDR.csv"   
 # This is an example peptide file
 
 ## Set times as the labeling time points 
@@ -68,11 +64,11 @@ p$time.zero <- 0
 p$time.unit <- "Hour" 
 p$mz.tol <- 0.005      # m/z windows set as plus or minus 0.005
 p$rt.tol <- 30         
-# Retention time window set as plus or minus 30 sec
+# Retention time winodw set as plus or minus 30 sec
 
 p$extra.channels <- 5  # Add extra 5 isotopic channels
 
-## Set parameter to get the relative abundance from EIC (relAbForTimes)
+## Set paprameter to get the relative abundance from EIC (relAbForTimes)
 ## available options are ("lm", "rlm", "lqs", "rq", "sum","log")
 p$regression.model <- "lm"   # "lm" as linear regression
 
@@ -133,7 +129,7 @@ save(dat, seqs, p, file=file.path(p$dir.results, "eicdata.Rdata"))
 ## Get fits for each sequence
 ## Reload what we've done so far
 # Skip these two command lines if users just run the above code
-dir.results <- "Turnover"  
+dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
 load(file.path(dir.results, "eicdata.Rdata"))       
 
 ## Set up multiple cores
@@ -162,7 +158,7 @@ save(dat, seqs, p, file=file.path(p$dir.results, "fit-log2k.Rdata"))
 ## Get parameters and save to a file
 ## Load results
 # Skip these two command lines if users just run the above code
-dir.results <- "Turnover"  
+dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))     
 
 ## Get the parameter fits for those succeeded and write to file
@@ -173,7 +169,7 @@ write.csv(fits, file=file.path(p$dir.results, "fits-log2k.csv"), na="")
 ## Make HTML output for each seq
 ## Load what we've done so far
 # Skip these two command lines if users just run the above code
-dir.results <- "Turnover"  
+dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))     
 
 ## set up multiple cores
@@ -186,7 +182,7 @@ out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-log2k")
 ## SECTION 4: Explore each peptide's fit as desired
 #####################################################################
 ## Load saved result
-dir.results <- "Turnover"  
+dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))
 
 ## Pick a fit to explore
@@ -214,7 +210,7 @@ plot(s$curve)
 ## SECTION 5: Use alpha model as "many" instead
 #####################################################################
 ## Load saved EIC data
-dir.results <- "Turnover"  
+dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
 load(file.path(dir.results, "eicdata.Rdata"))
 
 ## set alpha model differently
