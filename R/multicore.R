@@ -48,7 +48,7 @@ mclapply.progress <- function(x, FUN, ...,
     writeBin(numjobs, f)
     close(f)
     t2 <- proc.time()[3]
-    message("Ended   ", date(), "; elapsed time: ", showtime(round(t2-t1))
+    message("Ended   ", date(), "; elapsed time: ", showtime(round(t2-t1)))
     result
 }
 
