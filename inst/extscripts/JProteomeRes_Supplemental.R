@@ -5,8 +5,8 @@
 ## R-3.2.0 or higher is required
 
 ## To access mzXML files, the package "xcms" from Bioconductor is also required. For installation:
-source("http://bioconductor.org/biocLite.R")
-biocLite("xcms")  
+## > source("http://bioconductor.org/biocLite.R")
+## > biocLite("xcms")  
 
 ## The ProteinTurnover package is available on GitHub, https://github.com/HegemanLab/ProteinTurnover
 ## use devtools::install to install:
@@ -207,9 +207,6 @@ plot(s$relAb)
 # Make MLE plots
 plot(s$fit)
 
-# Make the plot of non-linear regression curve
-plot(s$curve)
-
 #####################################################################
 ## SECTION 5: Use alpha model as "many" instead
 #####################################################################
@@ -242,4 +239,14 @@ write.csv(fits, file=file.path(p$dir.results, "fits-many.csv"), na="")
 ## output to HTML
 out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-many")
 
+## We'll compare some of the output.
+s <- seqs[[2]]
+s$fit
+score.visual(s$fit)
+
+## Make MLE plots:
+plot(s$fit)
+
+# Make the plot of non-linear regression curve
+plot(s$curve)
 
