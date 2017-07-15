@@ -12,6 +12,10 @@
 ## use devtools::install to install:
 ## > devtools::install_github("HegemanLab/ProteinTurnover")
 
+## For reference, check the version that's installed
+R.version.string
+packageVersion("ProteinTurnover")
+
 #####################################################################
 ## SECTION 2: Prepare data files
 #####################################################################
