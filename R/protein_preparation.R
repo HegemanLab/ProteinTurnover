@@ -176,10 +176,12 @@ rawToRDS <- function(dir, files, Rfiles) {
     stopifnot(file.exists(file.path(dir, files)))
     stopifnot(length(files)==length(Rfiles))
     for(i in seq_along(files)) {
-        message("reading ", files[i])
+        t0 <- tic(paste("reading", files[i]))
         foo <- xcms::xcmsRaw(file.path(dir, files[i]))
-        message("writing ", Rfiles[i])
+        toc(t0)
+        t0 <- tic(paste("writing", Rfiles[i]))
         saveRDS(foo, file.path(dir, Rfiles[i]))
+        toc(t0)
     }
     Rfiles
 }
@@ -227,13 +229,16 @@ addEICs <- function(dat, files, type=c("mzXML", "rds", "obj"),
             if(!missing(dir)) paths <- file.path(dir, files)            
             robj <- readRDS(paths[i])
         } else { robj <- files[[i]] }
-        if(verbose) message("adding EICs for Time ", time)
+        if(verbose) t0 <- tic(paste("adding EICs for Time", time), appendLF=TRUE)
         if(verbose) pb <- utils::txtProgressBar(min = 0, max = length(dat), style = 1)
         for(j in seq_along(dat)) {
             dat[[j]] <- addEIC(dat[[j]], robj=robj, time=time)
             if(verbose) utils::setTxtProgressBar(pb, j) 
         }
-        if(verbose) close(pb)
+        if(verbose) {
+          close(pb)
+          toc(t0, "Elapsed time: %s")
+        }
     }
     ## run checkTimes again as maybe some that looked okay couldn't be read
     dat <- lapply(dat, checkTimes)
