@@ -11,7 +11,7 @@ lapply.progress <- function(x, FUN, ...) {
     })
     close(pb)
     t2 <- proc.time()[3]
-    message("Ended   ", date(), "; elapsed time: ", round(t2-t1), " secs")
+    message("Ended   ", date(), "; elapsed time: ", showtime(t2-t1))
     result
 }
     
@@ -95,4 +95,32 @@ save.graphic <- function(x, file, dir, color = TRUE, device=c("png", "pdf", "svg
     }, error=function(e) list(error=paste("Unable to plot:", e$message)))
     class(out) <- c("img", class(out))
     out
+}
+
+showtime <- function(x, digits=1) {
+  x <- round(x, digits)
+  if(x < 60) {
+    sec <- formatC(x, digits=digits, format="f")
+    sprintf("%ss",  sec)
+  } else {
+    w <- if(digits==0) {2} else { 3 + digits}
+    sec <- formatC(x %% 60, width=w, digits=digits, flag="0", format="f")
+    if(x < 3600) {
+      min <- formatC(floor(x/60), digits=0, format="f")
+      sprintf("%sm %ss", min, sec)
+    } else {
+      min <- formatC(floor((x/60) %% 60), width=2, flag="0")
+      hrs <- formatC(floor(x/3600), digit=0, format="f")
+      sprintf("%sh %sm %ss", hrs, min, sec)
+    }
+  }
+}
+
+tic <- function(m, appendLF=FALSE) {
+  message(m, appendLF=appendLF)
+  proc.time()[3]
+}
+
+toc <- function(x, m=" (time: %s)") {
+  message(sprintf(m, showtime(proc.time()[3]-x)))
 }

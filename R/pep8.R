@@ -390,7 +390,7 @@ print.summary.pepfit <- function(x, digits=x$digits, ...) {
   cat("\n")
   print(obj$test)
   if (!is.null(obj$time)) {
-    cat("\nTime Elapsed:", obj$time[3],"sec\n\n")
+    cat("\nTime Elapsed: ", showtime(obj$time[3]),"\n\n", sep="")
   }
 }
 
