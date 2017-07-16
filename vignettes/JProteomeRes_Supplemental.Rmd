@@ -448,6 +448,7 @@ file.remove("fit-many.Rdata")
 We'll compare some of the output.
 ```{r, eval=TRUE}
 s <- seqs[[2]]
+options(width=100)
 s$fit
 score.visual(s$fit)
 ```
