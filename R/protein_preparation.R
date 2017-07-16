@@ -166,7 +166,7 @@ checkTimes <- function(x) {
 #' @param dir directory that files are in
 #' @param files names of mzXML files
 #' @param Rfiles name of Rdata files
-#' @return names of Rdata files
+#' @return names of Rdata files (invisibly)
 #' @export
 rawToRDS <- function(dir, files, Rfiles) {
     if (!requireNamespace("xcms", quietly = TRUE)) {
@@ -183,7 +183,7 @@ rawToRDS <- function(dir, files, Rfiles) {
         saveRDS(foo, file.path(dir, Rfiles[i]))
         toc(t0)
     }
-    Rfiles
+    invisible(Rfiles)
 }
 
 #' Get EIC data on specified sequences
