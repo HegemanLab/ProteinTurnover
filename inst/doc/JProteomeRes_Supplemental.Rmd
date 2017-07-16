@@ -1,6 +1,6 @@
 ---
 title: "Supplemental Script from J. Proteome Res. article"
-author: "Kai-Ting Fan, adapted by Aaron Rendahl"
+author: "Kai-Ting Fan and Aaron Rendahl"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -15,8 +15,14 @@ vignette: >
 
 This vignette contains the code the supplemental script from the J. Proteome Res. article ([DOI:10.1021/acs.jproteome.5b00772](http://doi.org/10.1021/acs.jproteome.5b00772)). After the ProteinTurnover package is installed, the location of the script can be found using the `system.file` command.
 
-```{r, eval=FALSE}
+```{r}
 system.file(package="ProteinTurnover", "extscripts", "JProteomeRes_Supplemental.R")
+```
+
+It could be copied to the current directory from with R using `file.copy`.
+```{r}
+f <- system.file(package="ProteinTurnover", "extscripts", "JProteomeRes_Supplemental.R")
+file.copy(f, ".")
 ```
 
 ## SECTION 1: Install R packages
@@ -24,14 +30,22 @@ Install package "ProteinTurnover" and other required packages.
 R-3.2.0 or higher is required.
 
 To access mzXML files, the package "xcms" from Bioconductor is also required. For installation:
-```{r, eval=FALSE}
+```{r}
 source("http://bioconductor.org/biocLite.R")
 biocLite("xcms")  
 ```
 
 The ProteinTurnover package is available on GitHub, https://github.com/HegemanLab/ProteinTurnover.
-```{r, eval=FALSE}
-devtools::install_github(HegemanLab/ProteinTurnover)
+```{r}
+devtools::install_github("HegemanLab/ProteinTurnover")
+```
+
+For reference, check the version that's installed
+```{r}
+R.version.string
+# [1] "R version 3.3.2 (2016-10-31)"
+packageVersion("ProteinTurnover")
+# [1] '1.1.1'
 ```
 
 ## SECTION 2: Prepare data files
@@ -44,7 +58,7 @@ devtools::install_github(HegemanLab/ProteinTurnover)
 
 ## SECTION 3: Run ProteinTurnover
 Load library.
-```{r}
+```{r, eval=TRUE}
 library(ProteinTurnover)
 ```
 
@@ -54,31 +68,32 @@ p <- list()
 ```
 
 Set the number of cores to use. 
-On Windows OS, this should be 1; on Linux, it can be set as 8.
+On Windows OS, this should be 1; on Linux, it can be set as appropriate for your system.
 ```{r}
 p$num.cores <- 1
 ```
 
-Set directories and scaffold file name:
+Set directories and scaffold file name. 
 
 * Set the data file directory.
 * Set the directory that result files should be stored in.
 * Set scaffold file, which should be store in the data directory.
-* Note: For Windows OS users, replace all the \ with \\ from the copy of directory path.
+
+Note: These are treated as relative to the current directory, unless you give a complete path. For Windows OS users, to use subdirectories, replace all the \ with \\ from the copy of directory path.
 
 This is an example data directory:
 ```{r}
-p$dir.data <- "C:\\Users\\USERNAME\\Documents\\mzs"  
+p$dir.data <- "mzs"  
 ```
 
 This is an example result directory:
 ```{r}
-p$dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+p$dir.results <- "Turnover"  
 ```
 
 This is an example peptide file:
 ```{r}
-p$scaffoldfile <- "soluble-FDR.csv"   
+p$scaffoldfile <- "soluble.csv"   
 ```
 
 Set times and corresponding file names:
@@ -153,12 +168,36 @@ This only need be done once.
 This speeds up the steps below; it can be skipped if the raw files are used in addEICs.
 ```{r}
 rawToRDS(p$dir.data, p$rawfiles, p$rdsfiles)
+# reading hr_0.mzXML (time: 1m 38.3s)
+# writing hr_0.rds (time: 53.2s)
+# reading hr_4.mzXML (time: 1m 39.7s)
+# writing hr_4.rds (time: 54.2s)
+# reading hr_8.mzXML (time: 1m 49.0s)
+# writing hr_8.rds (time: 56.9s)
+# reading hr_16.mzXML (time: 1m 19.1s)
+# writing hr_16.rds (time: 41.9s)
+# reading hr_24.mzXML (time: 1m 42.0s)
+# writing hr_24.rds (time: 56.3s)
+# reading hr_32.mzXML (time: 1m 41.6s)
+# writing hr_32.rds (time: 56.4s)
+# reading hr_40.mzXML (time: 1m 42.0s)
+# writing hr_40.rds (time: 56.6s)
+# reading hr_48.mzXML (time: 1m 46.8s)
+# writing hr_48.rds (time: 53.6s)
+# Warning message:
+# 'loadRcppModules' is deprecated.
+# Use 'loadModule' instead.
+# See help("Deprecated") 
 ```
+
+The warning message is from a dependent package; it doesn't cause any problems at this point.
 
 ### Read in all the data
 Read the scaffold file.
 ```{r}
 dat <- readScaffoldFile(p$scaffoldfile, times=p$times, dir=p$dir.data)
+# reading Scaffold file ...
+# read soluble.csv
 ```
 
 Prepare the data structure for each sequence.
@@ -171,11 +210,28 @@ seqs <- makeSequences(dat,
                       mz.tol=p$mz.tol,
                       rt.tol=p$rt.tol,
                       extra.channels=p$extra.channels)
+# finding Sequences ...
 ```
 
 Get the EIC data for each sequence.
 ```{r}
 seqs <- addEICs(seqs, files=p$rdsfiles, type="rds", times=p$times, dir=p$dir.data)
+# reading hr_0.rds (time: 27.0s)
+# adding EICs for Time 0 (time: 4.5s)
+# reading hr_4.rds (time: 27.4s)
+# adding EICs for Time 4 (time: 3.7s)
+# reading hr_8.rds (time: 28.9s)
+# adding EICs for Time 8 (time: 2.9s)
+# reading hr_16.rds (time: 21.0s)
+# adding EICs for Time 16 (time: 2.2s)
+# reading hr_24.rds (time: 28.3s)
+# adding EICs for Time 24 (time: 2.5s)
+# reading hr_32.rds (time: 3.2s)
+# adding EICs for Time 32 (time: 2.0s)
+# reading hr_40.rds (time: 3.2s)
+# adding EICs for Time 40 (time: 1.7s)
+# reading hr_48.rds (time: 28.6s)
+# adding EICs for Time 48 (time: 1.8s)
 ```
 
 Save what we've done so far.
@@ -187,7 +243,7 @@ save(dat, seqs, p, file=file.path(p$dir.results, "eicdata.Rdata"))
 Reload what we've done so far.
 Skip these two command lines if users just run the above code
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "eicdata.Rdata"))       
 ```
 
@@ -212,6 +268,10 @@ seqs <- mclapply.progress(seqs, function(seq) {
   fit <- makeFit(seq=seq, relAb=relAb, M=p$M.model, alpha=p$alpha.model, se=TRUE, isotope.method=p$isotope.method)
   list(seq=seq, relAb=relAb, fit=fit)    
 })
+# Processing 1854 items, in parallel on 8 cores
+# Started Sat Jul 15 16:03:51 2017
+# ================================================================================
+# Ended   Sat Jul 15 16:06:08 2017; elapsed time: 2m 17.0s
 ```
 
 Save results so far.
@@ -224,22 +284,25 @@ save(dat, seqs, p, file=file.path(p$dir.results, "fit-log2k.Rdata"))
 Load results.
 Skip these two command lines if users just run the above code.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))     
 ```
 
 Get the parameter fits for those succeeded and write to file.
 ```{r}
 fits <- getPars(seqs)
+# There were 50 or more warnings (use warnings() to see the first 50) 
 write.csv(fits, file=file.path(p$dir.results, "fits-log2k.csv"), na="")
 ```
+
+The warnings in this case are all `In sqrt(diag(s$fit$vcov)) : NaNs produced`; that means that it could not compute a standard deviation for at least one of the parameters for that fit.
 
 ### Make HTML output for each seq
 
 Load what we've done so far.
 Skip these two command lines if users just run the above code.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "fit-log2k.Rdata"))     
 ```
 
@@ -251,24 +314,46 @@ if(!is.null(p$num.cores)) { options(mc.cores=p$num.cores) }
 Make the output.
 ```{r}
 out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-log2k")
+# Creating output for sequences with errors (these are faster).
+# Processing 866 items, in parallel on 8 cores
+# Started Sat Jul 15 16:06:20 2017
+# ================================================================================
+# Ended   Sat Jul 15 16:06:55 2017; elapsed time: 35.0s
+# Creating output for sequences without errors.
+# Processing 988 items, in parallel on 8 cores
+# Started Sat Jul 15 16:06:55 2017
+# ================================================================================
+# Ended   Sat Jul 15 16:19:49 2017; elapsed time: 12m 54.0s
+# There were 50 or more warnings (use warnings() to see the first 50)
 ```
 
+The warnings here are agin `In sqrt(diag(s$fit$vcov)) : NaNs produced`.
+
+Results are currently (15 Jul 2017) available here:
+[http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-log2k.html](http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-log2k.html)
 
 ## SECTION 4: Explore each peptide's fit as desired
 Load saved result.
+
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"
 load(file.path(dir.results, "fit-log2k.Rdata"))
+```
+
+```{r, eval=TRUE, include=FALSE}
+download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-log2k.Rdata", "fit-log2k.Rdata")
+load("fit-log2k.Rdata")
+file.remove("fit-log2k.Rdata")
 ```
 
 Pick a fit to explore.
 Put the index number of whichever peptide you want to explore, eg. No.2 peptide in the output file.
-```{r}
+```{r, eval=TRUE}
 s <- seqs[[2]]
 ```
 
 Get usual output for the fit.
-```{r}
+```{r, eval=TRUE}
 s$fit
 score.visual(s$fit)
 ```
@@ -276,30 +361,25 @@ score.visual(s$fit)
 Make desired pictures for this No.2 peptide:
 
 Make regression plots:
-```{r}
+```{r, fig.width=15, fig.height=5, eval=TRUE}
 regressionPlot(s$relAb)
 ```
 
 Make eic plots:
-```{r}
+```{r, fig.width=15, fig.height=5, eval=TRUE}
 plot(s$relAb)
 ```
 
 Make MLE plots:
-```{r}
+```{r, eval=TRUE, fig.width=7, fig.height=3}
 plot(s$fit)
-```
-
-Make the plot of non-linear regression curve:
-```{r}
-plot(s$curve)
 ```
 
 ## SECTION 5: Use alpha model as "many" instead
 
 Load saved EIC data.
 ```{r}
-dir.results <- "C:\\Users\\USERNAME\\Documents\\Turnover"  
+dir.results <- "Turnover"  
 load(file.path(dir.results, "eicdata.Rdata"))
 ```
 
@@ -322,6 +402,10 @@ seqs <- mclapply.progress(seqs, function(seq) {
   curve <- makeCurve(fit, plim=p$plim, isotope.method=p$isotope.method)
   list(seq=seq, relAb=relAb, fit=fit, curve=curve)
 })
+# Processing 1854 items, in parallel on 8 cores
+# Started Sat Jul 15 16:20:01 2017
+# ================================================================================
+# Ended   Sat Jul 15 16:23:44 2017; elapsed time: 3m 43.0s
 ```
 
 Save results so far.
@@ -332,10 +416,49 @@ save(dat, seqs, p, file=file.path(p$dir.results, "fit-many.Rdata"))
 Get the parameter fits for those succeeded and write to file.
 ```{r}
 fits <- getPars(seqs)
+# There were 50 or more warnings (use warnings() to see the first 50)
 write.csv(fits, file=file.path(p$dir.results, "fits-many.csv"), na="")
 ```
 
 Output to HTML:
 ```{r}
 out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-many")
+# Creating output for sequences with errors (these are faster).
+# Processing 853 items, in parallel on 8 cores
+# Started Sat Jul 15 16:23:55 2017
+# ================================================================================
+# Ended   Sat Jul 15 16:24:13 2017; elapsed time: 18.0s
+# Creating output for sequences without errors.
+# Processing 1001 items, in parallel on 8 cores
+# Started Sat Jul 15 16:24:13 2017
+# ================================================================================
+# Ended   Sat Jul 15 16:38:23 2017; elapsed time: 14m 10.0s
+# There were 50 or more warnings (use warnings() to see the first 50) 
+```
+
+Results are currently (13 Jul 2017) available here:
+[http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-many.html](http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-many.html)
+
+```{r, eval=TRUE, include=FALSE}
+download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-many.Rdata", "fit-many.Rdata")
+load("fit-many.Rdata")
+file.remove("fit-many.Rdata")
+```
+
+We'll compare some of the output.
+```{r, eval=TRUE}
+s <- seqs[[2]]
+options(width=100)
+s$fit
+score.visual(s$fit)
+```
+
+Make MLE plots:
+```{r, eval=TRUE, fig.width=7, fig.height=3}
+plot(s$fit)
+```
+
+Make the plot of non-linear regression curve.
+```{r, eval=TRUE, fig.width=6, fig.height=3}
+plot(s$curve)
 ```
