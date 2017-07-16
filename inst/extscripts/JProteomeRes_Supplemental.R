@@ -36,7 +36,7 @@ p <- list()
 
 ## Set the number of cores to use
 ## On Windows OS, this should be 1; on Linux, it can be set as appropriate for your system.
-p$num.cores <- 8
+p$num.cores <- 1
 
 ## Set the data file directory 
 ## Set the directory that result files should be stored in
