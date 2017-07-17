@@ -1,0 +1,96 @@
+---
+title: "About ProteinTurnover"
+author: "Aaron Rendahl, PhD"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{About ProteinTurnover}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ProteinTurnover)
+```
+
+```{r, examples}
+ex_ra <- relAbForTimes(data=isocounts)
+# plot(ex_ra)
+# regressionPlot(ex_ra)
+
+ex_di <- pepfit(TimePoint, RelAb, Channel, data=isodata,
+            Elements=list(N=12,C=45,H=73,O=15))
+
+ex_in <- pepfit(TimePoint, RelAb, Channel, data=isoincorp,
+                type="incorporation", 
+                Elements=list(N=12,C=45,H=73,O=15))
+```
+
+## Finding Relative Abundance
+
+TBD
+
+## Fitting Relative Abundance
+
+### The binomial model
+
+Consider a single peptide with $n$ atoms of a given element which has two possible isotopes, one with standard mass number and the other with one extra neutron. Let the probability of having one extra neutron (the abundance of the isotope) be $p$. The total number of extra neutrons $k$ in these $n$ atoms then follows a binomial distribution, Bin($n$, $p$), where $Pr(k ; n, p) = {n \choose k} p^k (1-p)^{n-k}$.
+
+In our experiments, we are modifying the abundance of the additional isotope by either incorporation or dilution, and want to estimate the changes in $p$ over time. At any particular time point $t$, we allow for three possibilities for the abundance, with these probabilities:
+
+* natural abundance, with probability $\alpha_t$,
+* estimated abundance at time 0, $\pi_0$, with probability $(1-r_t) (1-\alpha_t)$,
+* estimated abundance at time t, $\pi_t$, with probability $r_t (1-\alpha_t)$.
+
+For different situations, we can fix certain of these parameters, set them equal to each other, or define them using some other set parameters. For example, for incorporation, we know we have only natural abundance at time 0, so $\alpha_0=1$, $\pi_0=0$, and $r_t=1$ for all $t$. Or we might choose to let $\alpha_t$ change exponentially as a function of $t$.
+
+### The beta-binomial model
+
+In practice, the distribution of the abundance at a given time point can be more spread out than a binomial model would predict, so we also allow the number of extra neutrons to be models with a beta-binomial model, which has an additional parameter $M$ to allow for this extra spread. It can be thought of as a binomial distribution where the probability is random and follows a Beta($Mp$, $M(1-p)$) distribution, which is centered at $p$, falls between 0 and 1, and has variance $p(1-p) / (M + 1)$, so as $M$ approaches infinity, the variance of the underlying Beta distribution approaches zero and the distribution of the beta-binomial approaches that of a binomial.
+
+The probability mass formula for the beta-binomial is 
+$Pr(k ; n, p, M) = {n \choose k} \frac{B(Mp+k, M(1-p)+N-k)}{B(Mp, M(1-p)))}$.
+
+This $M$ parameter can be set to either differ across the timepoints or be the same across all time points. Other possibilities can be programmed as well.
+
+### Combining with other elements
+We started by considering only $n$ atoms of a given element within a peptide, but a peptide also has other elements which may be isotopes with extra neutrons. These other elements will vary only due to their natural abundance, but since we cannot distinguish which element extra atomic mass comes from, we need to model these other elements as well.
+
+To do so, we convolve the probabilities for each other atom together. This simply means to add up the probabilities of each possibility for each element. Consider the case of two atoms, and let $C_1$ and $C_2$ be the number of additional neutrons in each and $n$ be the maximum value across $C_1$ and $C_2$. Then the convolved probability for them together equalling $k$ is
+
+$P(C_1 + C_2 = k) = \sum_{i=0}^{n} P(C_1=i)\times P(C_2=(n-i))$.
+
+For additional atoms, we simply convolve them together with the previous result.
+
+In practice, since the natural abundance is each element is known, we initially calculate the overall probabilities of the other elements due to natural abundance, and then convolve this with the estimated probabilities for the element of interest.
+
+### Fitting using a multinomial likelihood
+
+Now consider multiple peptides, and suppose that for each we are able to measure the total number of extra neutrons at each timepoint. We could then count how many peptides have each possible number of extra neutrons, and consider this as a multinomial variable. A multinomial variable is similar to a binomial variable, except that there can be more than two outcomes. In this case, the possible outcomes are the possible number of extra peptides. Let $i$ extra neutrons occur with probability $p_i$, for $i=0, ..., n$. Assuming these are known, the probability of observing $i$ neutrons $k_i$ times is
+$$P(k_0,...,k_n; p_0, ... p_n) = {n \choose k_0, k_1, ..., k_n}p_0^{k_0}\cdots p_n^{k_n}.$$
+
+This is a full model that describes the data perfectly; it has $n+1$ parameters for each timepoint, $p_0$ to $p_n$, and these can be defined using the observed proportions in the data.
+
+Our model, described previously, also defines the probability of observing extra neutrons, but does so using less parameters. To find the best values for these parameters for a given data set, we use the idea of likelihood. This idea says that the parameters that give the best fit are those that result in the highest probability of observing the data that we actually observed, so in the probability function above, we now consider it to be a function of the parameters (the $p_i$'s) given the data (the $k_i$'s),
+
+We write these $p_i$ parameters in terms of the fewer parameters defined above ($\alpha_t$, $r_t$, and $\pi_t$, for each timepoint $t$), or even in terms of fewer parameters yet, which we will write in generality using $\theta$, so the likelihood function becomes
+$$L(\theta ; k_0,...,k_n) = {n \choose k_0, k_1, ..., k_n}p_0^{k_0}\cdots p_n^{k_n}.$$
+
+In practice, we notice that the combination does not depend on any of the parameters, and also that the maximization would give the same result after a log transformation, so we actually work on the log-likelihood function (ignoring the constant from the combination),
+$$l(\theta ; k_0,...,k_n) = \sum_{i=0}^n k_ilog(p_i),$$
+where again, the $p_i$'s are a function of ($\alpha_t$, $r_t$, and $\pi_t$, for each timepoint $t$ as defined earlier, which are a function of $\theta$ as needed for a particular application.
+
+### The quasi-multinomial distribution
+However, we cannot actually measure the total number of extra neutrons at each timepoint. Instead, for each timepoint, we start with data that has the proportion of counts for each possible number of extra neutrons; we now call these channels. 
+
+This is almost multinomial data; but instead of a given number of total counts which are randomly distributed among the channels, we only observe the proportion that are distributed to each channel. So we instead consider the data to be from a "quasi-multinomial" distribution, which allows the data to be probabilities instead of counts.
+
+In addition to allowing for probabilities, there is another benefit to considering the data as quasi-multinomial; for a multinomial variable, the variability of the data around the true probability would be determined by the total counts; similarly to the binomial distribution, the variance would be $n p_i (1-p_i)$. Since $n$ is unknown, this model allows the variance to be $\phi p_i (1-p_i)$ where $\phi$ is an additional parameter to be estimated from the data.
+
+A final benefit of this quasi-binomial model is that the fitting can be done using the likelihood from the usual multinomial, as described above, because the quasi-multinomial simply scales the variance so the "best fit" is same, all that will changes is the measures of precision about that fit.
+
+### Inference on a quasi-multinomial fit
+
+TBD
+

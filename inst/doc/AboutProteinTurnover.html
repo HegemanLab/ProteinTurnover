@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Aaron Rendahl, PhD" />
+
+<meta name="date" content="2017-07-17" />
+
+<title>About ProteinTurnover</title>
+
+
+
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">About ProteinTurnover</h1>
+<h4 class="author"><em>Aaron Rendahl, PhD</em></h4>
+<h4 class="date"><em>2017-07-17</em></h4>
+
+
+
+<div id="finding-relative-abundance" class="section level2">
+<h2>Finding Relative Abundance</h2>
+<p>TBD</p>
+</div>
+<div id="fitting-relative-abundance" class="section level2">
+<h2>Fitting Relative Abundance</h2>
+<div id="the-binomial-model" class="section level3">
+<h3>The binomial model</h3>
+<p>Consider a single peptide with <span class="math inline">\(n\)</span> atoms of a given element which has two possible isotopes, one with standard mass number and the other with one extra neutron. Let the probability of having one extra neutron (the abundance of the isotope) be <span class="math inline">\(p\)</span>. The total number of extra neutrons <span class="math inline">\(k\)</span> in these <span class="math inline">\(n\)</span> atoms then follows a binomial distribution, Bin(<span class="math inline">\(n\)</span>, <span class="math inline">\(p\)</span>), where <span class="math inline">\(Pr(k ; n, p) = {n \choose k} p^k (1-p)^{n-k}\)</span>.</p>
+<p>In our experiments, we are modifying the abundance of the additional isotope by either incorporation or dilution, and want to estimate the changes in <span class="math inline">\(p\)</span> over time. At any particular time point <span class="math inline">\(t\)</span>, we allow for three possibilities for the abundance, with these probabilities:</p>
+<ul>
+<li>natural abundance, with probability <span class="math inline">\(\alpha_t\)</span>,</li>
+<li>estimated abundance at time 0, <span class="math inline">\(\pi_0\)</span>, with probability <span class="math inline">\((1-r_t) (1-\alpha_t)\)</span>,</li>
+<li>estimated abundance at time t, <span class="math inline">\(\pi_t\)</span>, with probability <span class="math inline">\(r_t (1-\alpha_t)\)</span>.</li>
+</ul>
+<p>For different situations, we can fix certain of these parameters, set them equal to each other, or define them using some other set parameters. For example, for incorporation, we know we have only natural abundance at time 0, so <span class="math inline">\(\alpha_0=1\)</span>, <span class="math inline">\(\pi_0=0\)</span>, and <span class="math inline">\(r_t=1\)</span> for all <span class="math inline">\(t\)</span>. Or we might choose to let <span class="math inline">\(\alpha_t\)</span> change exponentially as a function of <span class="math inline">\(t\)</span>.</p>
+</div>
+<div id="the-beta-binomial-model" class="section level3">
+<h3>The beta-binomial model</h3>
+<p>In practice, the distribution of the abundance at a given time point can be more spread out than a binomial model would predict, so we also allow the number of extra neutrons to be models with a beta-binomial model, which has an additional parameter <span class="math inline">\(M\)</span> to allow for this extra spread. It can be thought of as a binomial distribution where the probability is random and follows a Beta(<span class="math inline">\(Mp\)</span>, <span class="math inline">\(M(1-p)\)</span>) distribution, which is centered at <span class="math inline">\(p\)</span>, falls between 0 and 1, and has variance <span class="math inline">\(p(1-p) / (M + 1)\)</span>, so as <span class="math inline">\(M\)</span> approaches infinity, the variance of the underlying Beta distribution approaches zero and the distribution of the beta-binomial approaches that of a binomial.</p>
+<p>The probability mass formula for the beta-binomial is <span class="math inline">\(Pr(k ; n, p, M) = {n \choose k} \frac{B(Mp+k, M(1-p)+N-k)}{B(Mp, M(1-p)))}\)</span>.</p>
+<p>This <span class="math inline">\(M\)</span> parameter can be set to either differ across the timepoints or be the same across all time points. Other possibilities can be programmed as well.</p>
+</div>
+<div id="combining-with-other-elements" class="section level3">
+<h3>Combining with other elements</h3>
+<p>We started by considering only <span class="math inline">\(n\)</span> atoms of a given element within a peptide, but a peptide also has other elements which may be isotopes with extra neutrons. These other elements will vary only due to their natural abundance, but since we cannot distinguish which element extra atomic mass comes from, we need to model these other elements as well.</p>
+<p>To do so, we convolve the probabilities for each other atom together. This simply means to add up the probabilities of each possibility for each element. Consider the case of two atoms, and let <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> be the number of additional neutrons in each and <span class="math inline">\(n\)</span> be the maximum value across <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>. Then the convolved probability for them together equalling <span class="math inline">\(k\)</span> is</p>
+<p><span class="math inline">\(P(C_1 + C_2 = k) = \sum_{i=0}^{n} P(C_1=i)\times P(C_2=(n-i))\)</span>.</p>
+<p>For additional atoms, we simply convolve them together with the previous result.</p>
+<p>In practice, since the natural abundance is each element is known, we initially calculate the overall probabilities of the other elements due to natural abundance, and then convolve this with the estimated probabilities for the element of interest.</p>
+</div>
+<div id="fitting-using-a-multinomial-likelihood" class="section level3">
+<h3>Fitting using a multinomial likelihood</h3>
+<p>Now consider multiple peptides, and suppose that for each we are able to measure the total number of extra neutrons at each timepoint. We could then count how many peptides have each possible number of extra neutrons, and consider this as a multinomial variable. A multinomial variable is similar to a binomial variable, except that there can be more than two outcomes. In this case, the possible outcomes are the possible number of extra peptides. Let <span class="math inline">\(i\)</span> extra neutrons occur with probability <span class="math inline">\(p_i\)</span>, for <span class="math inline">\(i=0, ..., n\)</span>. Assuming these are known, the probability of observing <span class="math inline">\(i\)</span> neutrons <span class="math inline">\(k_i\)</span> times is <span class="math display">\[P(k_0,...,k_n; p_0, ... p_n) = {n \choose k_0, k_1, ..., k_n}p_0^{k_0}\cdots p_n^{k_n}.\]</span></p>
+<p>This is a full model that describes the data perfectly; it has <span class="math inline">\(n+1\)</span> parameters for each timepoint, <span class="math inline">\(p_0\)</span> to <span class="math inline">\(p_n\)</span>, and these can be defined using the observed proportions in the data.</p>
+<p>Our model, described previously, also defines the probability of observing extra neutrons, but does so using less parameters. To find the best values for these parameters for a given data set, we use the idea of likelihood. This idea says that the parameters that give the best fit are those that result in the highest probability of observing the data that we actually observed, so in the probability function above, we now consider it to be a function of the parameters (the <span class="math inline">\(p_i\)</span>’s) given the data (the <span class="math inline">\(k_i\)</span>’s),</p>
+<p>We write these <span class="math inline">\(p_i\)</span> parameters in terms of the fewer parameters defined above (<span class="math inline">\(\alpha_t\)</span>, <span class="math inline">\(r_t\)</span>, and <span class="math inline">\(\pi_t\)</span>, for each timepoint <span class="math inline">\(t\)</span>), or even in terms of fewer parameters yet, which we will write in generality using <span class="math inline">\(\theta\)</span>, so the likelihood function becomes <span class="math display">\[L(\theta ; k_0,...,k_n) = {n \choose k_0, k_1, ..., k_n}p_0^{k_0}\cdots p_n^{k_n}.\]</span></p>
+<p>In practice, we notice that the combination does not depend on any of the parameters, and also that the maximization would give the same result after a log transformation, so we actually work on the log-likelihood function (ignoring the constant from the combination), <span class="math display">\[l(\theta ; k_0,...,k_n) = \sum_{i=0}^n k_ilog(p_i),\]</span> where again, the <span class="math inline">\(p_i\)</span>’s are a function of (<span class="math inline">\(\alpha_t\)</span>, <span class="math inline">\(r_t\)</span>, and <span class="math inline">\(\pi_t\)</span>, for each timepoint <span class="math inline">\(t\)</span> as defined earlier, which are a function of <span class="math inline">\(\theta\)</span> as needed for a particular application.</p>
+</div>
+<div id="the-quasi-multinomial-distribution" class="section level3">
+<h3>The quasi-multinomial distribution</h3>
+<p>However, we cannot actually measure the total number of extra neutrons at each timepoint. Instead, for each timepoint, we start with data that has the proportion of counts for each possible number of extra neutrons; we now call these channels.</p>
+<p>This is almost multinomial data; but instead of a given number of total counts which are randomly distributed among the channels, we only observe the proportion that are distributed to each channel. So we instead consider the data to be from a “quasi-multinomial” distribution, which allows the data to be probabilities instead of counts.</p>
+<p>In addition to allowing for probabilities, there is another benefit to considering the data as quasi-multinomial; for a multinomial variable, the variability of the data around the true probability would be determined by the total counts; similarly to the binomial distribution, the variance would be <span class="math inline">\(n p_i (1-p_i)\)</span>. Since <span class="math inline">\(n\)</span> is unknown, this model allows the variance to be <span class="math inline">\(\phi p_i (1-p_i)\)</span> where <span class="math inline">\(\phi\)</span> is an additional parameter to be estimated from the data.</p>
+<p>A final benefit of this quasi-binomial model is that the fitting can be done using the likelihood from the usual multinomial, as described above, because the quasi-multinomial simply scales the variance so the “best fit” is same, all that will changes is the measures of precision about that fit.</p>
+</div>
+<div id="inference-on-a-quasi-multinomial-fit" class="section level3">
+<h3>Inference on a quasi-multinomial fit</h3>
+<p>TBD</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
