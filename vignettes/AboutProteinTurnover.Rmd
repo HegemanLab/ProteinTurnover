@@ -27,11 +27,7 @@ ex_in <- pepfit(TimePoint, RelAb, Channel, data=isoincorp,
                 Elements=list(N=12,C=45,H=73,O=15))
 ```
 
-## Finding Relative Abundance
-
-TBD
-
-## Fitting Relative Abundance
+## Modeling the Relative Abundance
 
 ### The binomial model
 
