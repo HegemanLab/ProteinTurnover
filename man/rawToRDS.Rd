@@ -14,9 +14,8 @@ rawToRDS(dir, files, Rfiles)
 \item{Rfiles}{name of Rdata files}
 }
 \value{
-names of Rdata files
+names of Rdata files (invisibly)
 }
 \description{
 Convert raw mzXML files to Rdata files, and save in the same directory.
 }
-
