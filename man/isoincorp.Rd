@@ -21,4 +21,3 @@ pepfit(TimePoint, RelAb, Channel, data=isoincorp,
 Elements=list(N=12,C=45,H=82,O=12), type="incorporation")
 }
 \keyword{datasets}
-

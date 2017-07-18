@@ -21,4 +21,3 @@ data frame with: ID, Sequence, RT, MW, Z, TimePoint, Conf
 \description{
 Read Scaffold file
 }
-

@@ -35,4 +35,3 @@ a list for each sequence of that protein, each with
 \description{
 Get EIC data on specified sequences. This extracts the raw eic values, not the profiled values in class.
 }
-

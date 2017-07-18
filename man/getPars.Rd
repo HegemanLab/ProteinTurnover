@@ -21,4 +21,3 @@ a data frame with the output
 \description{
 Get output from a list of completed fits.
 }
-

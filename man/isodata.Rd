@@ -20,4 +20,3 @@ coplot(RelAb~Channel|factor(TimePoint), data=isodata)
 pepfit(TimePoint, RelAb, Channel, data=isodata, Elements=list(N=12,C=45,H=73,O=15))
 }
 \keyword{datasets}
-

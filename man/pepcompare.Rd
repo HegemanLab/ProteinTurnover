@@ -50,4 +50,3 @@ sample size is unknown, so a p-value cannot be computed without
     C = 45, H = 73, O = 15), M = "one")
  pepcompare(a0, a2)
 }
-

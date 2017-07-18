@@ -19,4 +19,3 @@ The fitted parameters from the pepfit object, in the desired format
 \description{
 Gets the fitted parameters from a pepfit object
 }
-

@@ -29,4 +29,3 @@ Extract peptide sequence information for a single sequence from a data file
 counts how many elements are present in the amino acid sequence
 then builds out the channels based on the isotope under study
 }
-

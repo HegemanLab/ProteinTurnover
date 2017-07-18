@@ -2,9 +2,9 @@
 % Please edit documentation in R/lackfit.R
 \name{score}
 \alias{score}
-\alias{score.N}
-\alias{score.dev}
 \alias{score.visual}
+\alias{score.dev}
+\alias{score.N}
 \title{Get a score for a given fit}
 \usage{
 score.visual(obj)
@@ -50,4 +50,3 @@ score.visual(a0)
 \seealso{
 \code{\link{pepfit}}
 }
-

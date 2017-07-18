@@ -2,6 +2,7 @@
 % Please edit documentation in R/proportions.R
 \name{relAbFromCounts}
 \alias{relAbFromCounts}
+\alias{relAbFromCounts}
 \title{Relative Abundance from Counts}
 \usage{
 relAbFromCounts(Count, Channel, RT, data, TimePoint, method = c("lm", "rlm",
@@ -65,4 +66,3 @@ Plots are created using the lattice library.
 \examples{
 data(isocounts)
 }
-

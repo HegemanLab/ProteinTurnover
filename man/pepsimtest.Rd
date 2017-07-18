@@ -2,8 +2,8 @@
 % Please edit documentation in R/lackfit.R
 \name{pepsimtest}
 \alias{pepsimtest}
-\alias{plot.pepsimtest}
 \alias{print.pepsimtest}
+\alias{plot.pepsimtest}
 \title{Test a set of simulated data}
 \usage{
 pepsimtest(object, ask = TRUE, n = object$Nrep, model = object$parent)
@@ -24,9 +24,9 @@ starting.  Disable with ask=FALSE.}
 
 \item{x}{the pepsimtest object}
 
-\item{ylim}{the vertical limits of the plot}
-
 \item{\dots}{to match the generic print function}
+
+\item{ylim}{the vertical limits of the plot}
 }
 \value{
 A list of class "pepsimtest" containing:
@@ -53,4 +53,3 @@ plot(a0.test.sim)
 \seealso{
 \code{\link{pepsim}}
 }
-

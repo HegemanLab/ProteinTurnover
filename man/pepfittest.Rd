@@ -42,4 +42,3 @@ pepfittest(a0)
 \seealso{
 \code{\link{pepfit}}
 }
-

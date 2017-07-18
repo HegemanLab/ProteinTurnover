@@ -7,10 +7,10 @@
 calcEnv(..., abundance = NULL)
 }
 \arguments{
+\item{\dots}{The number of each element of interest.}
+
 \item{abundance}{A list of the natural abundance for each element.
 By default, it knows about C, H, O, N, and S.}
-
-\item{\dots}{The number of each element of interest.}
 }
 \value{
 A numeric vector with the natural abundance of each unit mass extra,
@@ -36,4 +36,3 @@ calcEnv(Z=1, abundance=list(Z=c(0.7, 0.2, 0.1)))
 # combined natural abundance for Z and N
 calcEnv(N=1, Z=1, abundance=list(Z=c(0.7, 0.2, 0.1)))
 }
-

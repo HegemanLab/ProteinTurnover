@@ -13,6 +13,8 @@ mclapply.progress(x, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
 
 \item{FUN}{the function to apply}
 
+\item{\dots}{parameters passed to FUN}
+
 \item{mc.preschedule}{passed to mclapply}
 
 \item{mc.set.seed}{passed to mclapply}
@@ -24,8 +26,6 @@ mclapply.progress(x, FUN, ..., mc.preschedule = TRUE, mc.set.seed = TRUE,
 \item{mc.cleanup}{passed to mclapply}
 
 \item{mc.allow.recursive}{passed to mclapply}
-
-\item{\dots}{parameters passed to FUN}
 }
 \value{
 the result from mclapply(x, FUN, ...)
@@ -33,4 +33,3 @@ the result from mclapply(x, FUN, ...)
 \description{
 lapply over multiple cores with progress bar
 }
-

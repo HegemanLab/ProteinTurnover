@@ -25,4 +25,3 @@ information on the individual pages, invisibly
 \description{
 Make HTML output for a list of fits
 }
-

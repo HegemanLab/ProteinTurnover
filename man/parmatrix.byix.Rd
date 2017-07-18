@@ -40,4 +40,3 @@ par.function <- parmatrix.byix(par.index, par.default)
 par.function(c(1.1, 1.2))
 par.function(c(21, 22))
 }
-

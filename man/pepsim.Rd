@@ -2,8 +2,8 @@
 % Please edit documentation in R/lackfit.R
 \name{pepsim}
 \alias{pepsim}
-\alias{plot.pepsim}
 \alias{print.pepsim}
+\alias{plot.pepsim}
 \title{Create a set of simulated data}
 \usage{
 pepsim(object, Nobs = 1/pepfittest(object)$sigma2, Nrep = 10)
@@ -21,9 +21,9 @@ pepsim(object, Nobs = 1/pepfittest(object)$sigma2, Nrep = 10)
 
 \item{x}{a pepsim object}
 
-\item{n}{how many simulations to plot}
-
 \item{\dots}{currently ignored}
+
+\item{n}{how many simulations to plot}
 }
 \value{
 A list of class pepsim containing:
@@ -44,4 +44,3 @@ a0 <- pepfit(data=isodata, Elements = list(N = 12,
 a0.sim <- pepsim(a0, Nrep = 50)
 plot(plot(a0.sim))
 }
-

@@ -32,4 +32,3 @@ summary(a)
 \seealso{
 \code{\link{pepfittest}}
 }
-

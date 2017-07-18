@@ -28,4 +28,3 @@ counts <- within(isocounts,{
 coplot(logCount~RT|Channel*TimePoint, data=counts, show.given=FALSE)
 }
 \keyword{datasets}
-

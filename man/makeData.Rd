@@ -12,4 +12,3 @@ makeData(seq)
 \description{
 Make data frame from a sequence
 }
-
