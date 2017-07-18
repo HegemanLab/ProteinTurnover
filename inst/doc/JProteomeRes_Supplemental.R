@@ -188,12 +188,10 @@ library(ProteinTurnover)
 #  load(file.path(dir.results, "fit-log2k.Rdata"))
 
 ## ---- eval=TRUE, include=FALSE-------------------------------------------
-download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-log2k.Rdata", "fit-log2k.Rdata")
-load("fit-log2k.Rdata")
-file.remove("fit-log2k.Rdata")
+s <- ProteinTurnover:::example2
 
-## ---- eval=TRUE----------------------------------------------------------
-s <- seqs[[2]]
+## ------------------------------------------------------------------------
+#  s <- seqs[[2]]
 
 ## ---- eval=TRUE----------------------------------------------------------
 s$fit
@@ -254,12 +252,12 @@ plot(s$fit)
 #  # There were 50 or more warnings (use warnings() to see the first 50)
 
 ## ---- eval=TRUE, include=FALSE-------------------------------------------
-download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-many.Rdata", "fit-many.Rdata")
-load("fit-many.Rdata")
-file.remove("fit-many.Rdata")
+s <- ProteinTurnover:::example2
+
+## ------------------------------------------------------------------------
+#  s <- seqs[[2]]
 
 ## ---- eval=TRUE-----------------------------------------------------------------------------------
-s <- seqs[[2]]
 options(width=100)
 s$fit
 score.visual(s$fit)
@@ -269,4 +267,20 @@ plot(s$fit)
 
 ## ---- eval=TRUE, fig.width=6, fig.height=3--------------------------------------------------------
 plot(s$curve)
+
+## ---- include=FALSE, eval=FALSE-------------------------------------------------------------------
+#  download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-log2k.Rdata", "fit-log2k.Rdata")
+#  load("fit-log2k.Rdata")
+#  example1 <- seqs[[2]]
+#  
+#  download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-many.Rdata", "fit-many.Rdata")
+#  load("fit-many.Rdata")
+#  example2 <- seqs[[2]]
+#  
+#  aaTable <- ProteinTurnover:::aaTable
+#  LocusNumbers <- ProteinTurnover:::LocusNumbers
+#  devtools::use_data(aaTable, LocusNumbers, example1, example2, internal = TRUE)
+#  
+#  file.remove("fit-log2k.Rdata")
+#  file.remove("fit-many.Rdata")
 

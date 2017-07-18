@@ -27,11 +27,7 @@ ex_in <- pepfit(TimePoint, RelAb, Channel, data=isoincorp,
                 Elements=list(N=12,C=45,H=73,O=15))
 ```
 
-## Finding Relative Abundance
-
-TBD
-
-## Fitting Relative Abundance
+## Modeling the Relative Abundance
 
 ### The binomial model
 
@@ -59,7 +55,7 @@ We started by considering only $n$ atoms of a given element within a peptide, bu
 
 To do so, we convolve the probabilities for each other atom together. This simply means to add up the probabilities of each possibility for each element. Consider the case of two atoms, and let $C_1$ and $C_2$ be the number of additional neutrons in each and $n$ be the maximum value across $C_1$ and $C_2$. Then the convolved probability for them together equalling $k$ is
 
-$P(C_1 + C_2 = k) = \sum_{i=0}^{n} P(C_1=i)\times P(C_2=(n-i))$.
+$P(C_1 + C_2 = k) = \sum_{i=0}^{k} P(C_1=i)\times P(C_2=(k-i))$.
 
 For additional atoms, we simply convolve them together with the previous result.
 
@@ -90,7 +86,29 @@ In addition to allowing for probabilities, there is another benefit to consideri
 
 A final benefit of this quasi-binomial model is that the fitting can be done using the likelihood from the usual multinomial, as described above, because the quasi-multinomial simply scales the variance so the "best fit" is same, all that will changes is the measures of precision about that fit.
 
-### Inference on a quasi-multinomial fit
+### Assessing the quasi-multinomial fit
 
-TBD
+We consider three ways to assess how well a quasi-multinomial model fits, an $R^2$ based on the deviance, a variance measure based on Pearson's residuals, and a measure that attempts to capture the visual difference. 
+
+These measures are based on the observed data (obs), the predicted values from the model (exp), and the predictions from a null model (null), which is simply within each timepoint, each channel is equally likely. $N$ is the total number of observations, and the degrees of freedom from the fit $df_{fit}$ are $N$ minus the number of parameters in the model, and the degrees of freedom from the null model $df_{null}$ are $N$ minus the number of days.
+
+#### Deviance measures
+
+There is not a true $R^2$ for models like this, but a commonly used psuedo-$R^2$ is from Nagelkerke.
+
+* full model deviance: $D_{full} = -2\sum(obs\times\log(obs)))$
+* fit deviance: $D_{fit} = -2\sum(obs\times\log(exp)) - D_{full}$
+* null deviance: $D_0 = -2\sum(obs\times\log(null)) - D_{full}$
+* Nagelkerke $R^2 = 1-\frac{\exp((D_{fit}-D_0)/N))}{(1-\exp(-D_0/N))}$
+
+#### Pearson measures
+
+* Pearson residuals $r_{P} = (obs - exp)/\sqrt{exp}$
+* $X^2 = \sum r_P^2$
+* $\sigma^2 = X^2/df_{fit}$
+
+#### Visual score
+
+This attempts to measure how close the fitted values are visually to the observed data. It is the ratio of the total difference between the fitted and observed values to the total observed values, $(1 - \sum(|exp-obs|)/\sum(obs))\times 100$. This is computed for each timepoint separately, and the timepoint results are averaged for an overall result.
+
 

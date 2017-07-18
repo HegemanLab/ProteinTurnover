@@ -12,7 +12,7 @@
 
 <meta name="author" content="Aaron Rendahl, PhD" />
 
-<meta name="date" content="2017-07-17" />
+<meta name="date" content="2017-07-18" />
 
 <title>About ProteinTurnover</title>
 
@@ -32,16 +32,12 @@
 
 <h1 class="title toc-ignore">About ProteinTurnover</h1>
 <h4 class="author"><em>Aaron Rendahl, PhD</em></h4>
-<h4 class="date"><em>2017-07-17</em></h4>
+<h4 class="date"><em>2017-07-18</em></h4>
 
 
 
-<div id="finding-relative-abundance" class="section level2">
-<h2>Finding Relative Abundance</h2>
-<p>TBD</p>
-</div>
-<div id="fitting-relative-abundance" class="section level2">
-<h2>Fitting Relative Abundance</h2>
+<div id="modeling-the-relative-abundance" class="section level2">
+<h2>Modeling the Relative Abundance</h2>
 <div id="the-binomial-model" class="section level3">
 <h3>The binomial model</h3>
 <p>Consider a single peptide with <span class="math inline">\(n\)</span> atoms of a given element which has two possible isotopes, one with standard mass number and the other with one extra neutron. Let the probability of having one extra neutron (the abundance of the isotope) be <span class="math inline">\(p\)</span>. The total number of extra neutrons <span class="math inline">\(k\)</span> in these <span class="math inline">\(n\)</span> atoms then follows a binomial distribution, Bin(<span class="math inline">\(n\)</span>, <span class="math inline">\(p\)</span>), where <span class="math inline">\(Pr(k ; n, p) = {n \choose k} p^k (1-p)^{n-k}\)</span>.</p>
@@ -63,7 +59,7 @@
 <h3>Combining with other elements</h3>
 <p>We started by considering only <span class="math inline">\(n\)</span> atoms of a given element within a peptide, but a peptide also has other elements which may be isotopes with extra neutrons. These other elements will vary only due to their natural abundance, but since we cannot distinguish which element extra atomic mass comes from, we need to model these other elements as well.</p>
 <p>To do so, we convolve the probabilities for each other atom together. This simply means to add up the probabilities of each possibility for each element. Consider the case of two atoms, and let <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> be the number of additional neutrons in each and <span class="math inline">\(n\)</span> be the maximum value across <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>. Then the convolved probability for them together equalling <span class="math inline">\(k\)</span> is</p>
-<p><span class="math inline">\(P(C_1 + C_2 = k) = \sum_{i=0}^{n} P(C_1=i)\times P(C_2=(n-i))\)</span>.</p>
+<p><span class="math inline">\(P(C_1 + C_2 = k) = \sum_{i=0}^{k} P(C_1=i)\times P(C_2=(k-i))\)</span>.</p>
 <p>For additional atoms, we simply convolve them together with the previous result.</p>
 <p>In practice, since the natural abundance is each element is known, we initially calculate the overall probabilities of the other elements due to natural abundance, and then convolve this with the estimated probabilities for the element of interest.</p>
 </div>
@@ -82,9 +78,32 @@
 <p>In addition to allowing for probabilities, there is another benefit to considering the data as quasi-multinomial; for a multinomial variable, the variability of the data around the true probability would be determined by the total counts; similarly to the binomial distribution, the variance would be <span class="math inline">\(n p_i (1-p_i)\)</span>. Since <span class="math inline">\(n\)</span> is unknown, this model allows the variance to be <span class="math inline">\(\phi p_i (1-p_i)\)</span> where <span class="math inline">\(\phi\)</span> is an additional parameter to be estimated from the data.</p>
 <p>A final benefit of this quasi-binomial model is that the fitting can be done using the likelihood from the usual multinomial, as described above, because the quasi-multinomial simply scales the variance so the “best fit” is same, all that will changes is the measures of precision about that fit.</p>
 </div>
-<div id="inference-on-a-quasi-multinomial-fit" class="section level3">
-<h3>Inference on a quasi-multinomial fit</h3>
-<p>TBD</p>
+<div id="assessing-the-quasi-multinomial-fit" class="section level3">
+<h3>Assessing the quasi-multinomial fit</h3>
+<p>We consider three ways to assess how well a quasi-multinomial model fits, an <span class="math inline">\(R^2\)</span> based on the deviance, a variance measure based on Pearson’s residuals, and a measure that attempts to capture the visual difference.</p>
+<p>These measures are based on the observed data (obs), the predicted values from the model (exp), and the predictions from a null model (null), which is simply within each timepoint, each channel is equally likely. <span class="math inline">\(N\)</span> is the total number of observations, and the degrees of freedom from the fit <span class="math inline">\(df_{fit}\)</span> are <span class="math inline">\(N\)</span> minus the number of parameters in the model, and the degrees of freedom from the null model <span class="math inline">\(df_{null}\)</span> are <span class="math inline">\(N\)</span> minus the number of days.</p>
+<div id="deviance-measures" class="section level4">
+<h4>Deviance measures</h4>
+<p>There is not a true <span class="math inline">\(R^2\)</span> for models like this, but a commonly used psuedo-<span class="math inline">\(R^2\)</span> is from Nagelkerke.</p>
+<ul>
+<li>full model deviance: <span class="math inline">\(D_{full} = -2\sum(obs\times\log(obs)))\)</span></li>
+<li>fit deviance: <span class="math inline">\(D_{fit} = -2\sum(obs\times\log(exp)) - D_{full}\)</span></li>
+<li>null deviance: <span class="math inline">\(D_0 = -2\sum(obs\times\log(null)) - D_{full}\)</span></li>
+<li>Nagelkerke <span class="math inline">\(R^2 = 1-\frac{\exp((D_{fit}-D_0)/N))}{(1-\exp(-D_0/N))}\)</span></li>
+</ul>
+</div>
+<div id="pearson-measures" class="section level4">
+<h4>Pearson measures</h4>
+<ul>
+<li>Pearson residuals <span class="math inline">\(r_{P} = (obs - exp)/\sqrt{exp}\)</span></li>
+<li><span class="math inline">\(X^2 = \sum r_P^2\)</span></li>
+<li><span class="math inline">\(\sigma^2 = X^2/df_{fit}\)</span></li>
+</ul>
+</div>
+<div id="visual-score" class="section level4">
+<h4>Visual score</h4>
+<p>This attempts to measure how close the fitted values are visually to the observed data. It is the ratio of the total difference between the fitted and observed values to the total observed values, <span class="math inline">\((1 - \sum(|exp-obs|)/\sum(obs))\times 100\)</span>. This is computed for each timepoint separately, and the timepoint results are averaged for an overall result.</p>
+</div>
 </div>
 </div>
 
