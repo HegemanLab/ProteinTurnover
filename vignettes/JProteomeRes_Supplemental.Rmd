@@ -25,6 +25,9 @@ f <- system.file(package="ProteinTurnover", "extscripts", "JProteomeRes_Suppleme
 file.copy(f, ".")
 ```
 
+Sample data and results used in this vignette are currently (15 Jul 2017) available here:
+[http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript](http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript).
+
 ## SECTION 1: Install R packages
 Install package "ProteinTurnover" and other required packages.
 R-3.2.0 or higher is required.
@@ -340,15 +343,13 @@ dir.results <- "Turnover"
 load(file.path(dir.results, "fit-log2k.Rdata"))
 ```
 
-```{r, eval=TRUE, include=FALSE}
-download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-log2k.Rdata", "fit-log2k.Rdata")
-load("fit-log2k.Rdata")
-file.remove("fit-log2k.Rdata")
-```
-
 Pick a fit to explore.
 Put the index number of whichever peptide you want to explore, eg. No.2 peptide in the output file.
-```{r, eval=TRUE}
+```{r, eval=TRUE, include=FALSE}
+s <- ProteinTurnover:::example2
+```
+
+```{r}
 s <- seqs[[2]]
 ```
 
@@ -439,15 +440,18 @@ out <- makeSequenceHTML(seqs, dir=p$dir.results, file="results-many")
 Results are currently (13 Jul 2017) available here:
 [http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-many.html](http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/results-many.html)
 
-```{r, eval=TRUE, include=FALSE}
-download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-many.Rdata", "fit-many.Rdata")
-load("fit-many.Rdata")
-file.remove("fit-many.Rdata")
-```
+
 
 We'll compare some of the output.
-```{r, eval=TRUE}
+```{r, eval=TRUE, include=FALSE}
+s <- ProteinTurnover:::example2
+```
+
+```{r}
 s <- seqs[[2]]
+```
+
+```{r, eval=TRUE}
 options(width=100)
 s$fit
 score.visual(s$fit)
@@ -461,4 +465,21 @@ plot(s$fit)
 Make the plot of non-linear regression curve.
 ```{r, eval=TRUE, fig.width=6, fig.height=3}
 plot(s$curve)
+```
+
+```{r, include=FALSE, eval=FALSE}
+download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-log2k.Rdata", "fit-log2k.Rdata")
+load("fit-log2k.Rdata")
+example1 <- seqs[[2]]
+
+download.file("http://users.stat.umn.edu/~rend0020/ProteinTurnoverScript/Turnover/fit-many.Rdata", "fit-many.Rdata")
+load("fit-many.Rdata")
+example2 <- seqs[[2]]
+
+aaTable <- ProteinTurnover:::aaTable
+LocusNumbers <- ProteinTurnover:::LocusNumbers
+devtools::use_data(aaTable, LocusNumbers, example1, example2, internal = TRUE)
+
+file.remove("fit-log2k.Rdata")
+file.remove("fit-many.Rdata")
 ```
