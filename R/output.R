@@ -110,7 +110,7 @@ showtime <- function(x, digits=1) {
       sprintf("%sm %ss", min, sec)
     } else {
       min <- formatC(floor((x/60) %% 60), width=2, flag="0")
-      hrs <- formatC(floor(x/3600), digit=0, format="f")
+      hrs <- formatC(floor(x/3600), digits=0, format="f")
       sprintf("%sh %sm %ss", hrs, min, sec)
     }
   }
