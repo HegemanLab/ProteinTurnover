@@ -58,7 +58,8 @@ relAbForTimes <- function(Count, Channel, RT, TimePoint, data, nboot=0, ...) {
   structure(list(data.long=d.long,
                  data=data,
                  norm_channel=sapply(out, function(x) x$norm_channel),
-                 coefs=lapply(out, function(x) x$coefs),                 
+                 coefs=lapply(out, function(x) x$coefs),          
+                 Rsq=lapply(out, function(x) x$Rsq),
                  boot=do.call(rbind, lapply(out, function(x) x$boot)),
                  method=out[[1]]$method, threshold=out[[1]]$threshold, cutoff=out[[1]]$cutoff),
             class=c(paste(class(out[[1]])[1:2],"Times",sep=""),"list") )
