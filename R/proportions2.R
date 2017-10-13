@@ -4,7 +4,8 @@
 #'  retention times, and over multiple time points
 #'
 #'   The data from each time point is fit separately, using
-#'  relAbFromCounts.  Plots are created using the lattice library.
+#'  relAbFromCounts.  Plots are created using the lattice library. 
+#'  For regressionPlot, the Channel and TimePoint arguments allow you to subset before plotting.
 #' 
 #' @param Count     Observed counts
 #' @param Channel     Channels corresponding to the observed counts
@@ -74,12 +75,18 @@ regressionPlot <- function (x, ...) {
 }
 
 #' @export
-regressionPlot.regRelAbTimes <- function(x, ...) {
+regressionPlot.regRelAbTimes <- function(x, Channel, TimePoint, ...) {
   obj <- x
   d.long <- obj$data.long
+  if(!missing(Channel)) {
+    d.long <- d.long[d.long$Channel %in% Channel,]
+  }
+  if(!missing(TimePoint)) {
+    d.long <- d.long[d.long$TimePoint %in% TimePoint,]
+  }
   d.long$Channel <- factor(d.long$Channel)
   d.long$TimePoint <- factor(d.long$TimePoint)
-  bcn <- obj$norm_channel
+  bcn <- obj$norm_channel[levels(d.long$TimePoint)]
   ubcn <- unique(bcn)
   if(length(ubcn)==1) {
     xlab <- paste("Base Count, Channel", ubcn)
@@ -91,8 +98,8 @@ regressionPlot.regRelAbTimes <- function(x, ...) {
          panel=function(x,y,subscripts=NULL) {
            if(!all(is.na(y))) {
              lattice::panel.points(x,y, pch=c(4,1)[d.long$use[subscripts]+1])
-             timename <- d.long$TimePoint[subscripts[1]]
-             chname <- d.long$Channel[subscripts[1]]
+             timename <- as.character(d.long$TimePoint[subscripts[1]])
+             chname <- as.character(d.long$Channel[subscripts[1]])
              chrow <- which(rownames(obj$coefs[[timename]])==chname)
              lattice::panel.abline(obj$coefs[[timename]][chrow,])
            } 

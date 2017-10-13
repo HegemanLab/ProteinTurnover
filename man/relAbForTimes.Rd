@@ -59,7 +59,8 @@ Gets relative abundance of each channel from counts taken at several
 }
 \details{
 The data from each time point is fit separately, using
- relAbFromCounts.  Plots are created using the lattice library.
+ relAbFromCounts.  Plots are created using the lattice library. 
+ For regressionPlot, the Channel and TimePoint arguments allow you to subset before plotting.
 }
 \examples{
 data(isocounts)
