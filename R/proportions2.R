@@ -123,7 +123,7 @@ regressionPlot.logRelAbTimes <- function(x, ...) {
 #' @rdname relAbForTimes
 #' @param type desired type of plot
 #' @export
-plot.RelAbTimes <- function(x, ..., type=c("relAb", "regression")) {
+plot.RelAbTimes <- function(x, Channel, TimePoint, ..., type=c("relAb", "regression")) {
     type <- match.arg(type)
     if(type=="regression") {
         regressionPlot(x, ...)
@@ -131,6 +131,12 @@ plot.RelAbTimes <- function(x, ..., type=c("relAb", "regression")) {
         d.long <- x$data.long
         d.long$Channel <- factor(d.long$Channel)
         d.long$TimePoint <- factor(d.long$TimePoint)
+        if(!missing(Channel)) {
+          d.long <- d.long[d.long$Channel %in% Channel,]
+        }
+        if(!missing(TimePoint)) {
+          d.long <- d.long[d.long$TimePoint %in% TimePoint,]
+        }
         p <- lattice::xyplot(Count ~ RT | Channel*TimePoint, data=d.long, as.table=TRUE,
                     panel=function(x,y,subscripts=NULL) {
                         lattice::panel.points(x,y,pch=c(4,1)[d.long$use[subscripts]+1])
